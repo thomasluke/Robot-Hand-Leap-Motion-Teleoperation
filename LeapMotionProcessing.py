@@ -1,6 +1,18 @@
 #!/usr/bin/env python
-import sys 
-# sys.path.insert(0, "/lib")
+
+import os,sys
+# src_dir = os.path.dirname(inspect.getfile(inspect.currentframe()))
+
+# lib_dir = os.path.abspath(os.path.join(src_dir, ''))
+# sys.path.insert(0, lib_dir)
+
+
+# sys.path.append("C:\Users\Tom Harrison\Desktop\Subject Folders\Google Sync\Capstone\Code")
+# sys.path.append("/path/to/lib/x86")
+# sys.path.append("/path/to/lib") 
+# dir_path = os.path.dirname(os.path.realpath(Leap.py))
+# print (dir_path)
+
 import Leap
 
 import threading
