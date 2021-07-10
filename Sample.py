@@ -36,12 +36,13 @@ class SampleListener(Leap.Listener):
 
     def on_frame(self, controller):
         # Get the most recent frame and report some basic information
-        frame = controller.frame()
+        frame = controller.frame() # Frame sent from Leap Motion Controller to computer
 
         print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d, tools: %d, gestures: %d" % (
               frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools), len(frame.gestures()))
 
-        # Get hands
+        # Get hands data from each frame
+        # For loop repeats for each hand present in the frame
         for hand in frame.hands:
 
             handType = "Left hand" if hand.is_left else "Right hand"
@@ -50,8 +51,8 @@ class SampleListener(Leap.Listener):
                 handType, hand.id, hand.palm_position)
 
             # Get the hand's normal vector and direction
-            normal = hand.palm_normal
-            direction = hand.direction
+            normal = hand.palm_normal # Normal vectors points outwards from palm
+            direction = hand.direction # Direction vector points from palm towards fingertips
 
             # Calculate the hand's pitch, roll, and yaw angles
             print "  pitch: %f degrees, roll: %f degrees, yaw: %f degrees" % (
