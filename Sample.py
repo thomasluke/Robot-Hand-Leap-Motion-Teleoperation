@@ -63,9 +63,9 @@ class SampleListener(Leap.Listener):
             # Get arm bone
             arm = hand.arm
             print "  Arm direction: %s, wrist position: %s, elbow position: %s" % (
-                arm.direction,
-                arm.wrist_position,
-                arm.elbow_position)
+                arm.direction, # Vector for direction arm is pointing towards hand
+                arm.wrist_position, # X, Y, Z coordinate for the locaton of centre of wrist
+                arm.elbow_position) # X, Y, Z coordinate for the locaton of centre of elbow
 
             # Get fingers
             for finger in hand.fingers:
