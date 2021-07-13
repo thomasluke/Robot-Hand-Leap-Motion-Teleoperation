@@ -6,7 +6,11 @@
 # between Leap Motion and you, your company or other organization.             #
 ################################################################################
 
-import Leap, sys, thread, time
+import Leap
+import sys
+import thread
+import time
+import serial
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
 
@@ -22,10 +26,10 @@ class SampleListener(Leap.Listener):
         print "Connected"
 
         # Enable gestures
-        controller.enable_gesture(Leap.Gesture.TYPE_CIRCLE);
-        controller.enable_gesture(Leap.Gesture.TYPE_KEY_TAP);
-        controller.enable_gesture(Leap.Gesture.TYPE_SCREEN_TAP);
-        controller.enable_gesture(Leap.Gesture.TYPE_SWIPE);
+        controller.enable_gesture(Leap.Gesture.TYPE_CIRCLE)
+        controller.enable_gesture(Leap.Gesture.TYPE_KEY_TAP)
+        controller.enable_gesture(Leap.Gesture.TYPE_SCREEN_TAP)
+        controller.enable_gesture(Leap.Gesture.TYPE_SWIPE)
 
     def on_disconnect(self, controller):
         # Note: not dispatched when running in a debugger.
@@ -36,7 +40,7 @@ class SampleListener(Leap.Listener):
 
     def on_frame(self, controller):
         # Get the most recent frame and report some basic information
-        frame = controller.frame() # Frame sent from Leap Motion Controller to computer
+        frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
 
         print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d, tools: %d, gestures: %d" % (
               frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools), len(frame.gestures()))
@@ -51,8 +55,8 @@ class SampleListener(Leap.Listener):
                 handType, hand.id, hand.palm_position)
 
             # Get the hand's normal vector and direction
-            normal = hand.palm_normal # Normal vectors points outwards from palm
-            direction = hand.direction # Direction vector points from palm towards fingertips
+            normal = hand.palm_normal  # Normal vectors points outwards from palm
+            direction = hand.direction  # Direction vector points from palm towards fingertips
 
             # Calculate the hand's pitch, roll, and yaw angles
             print "  pitch: %f degrees, roll: %f degrees, yaw: %f degrees" % (
@@ -63,9 +67,9 @@ class SampleListener(Leap.Listener):
             # Get arm bone
             arm = hand.arm
             print "  Arm direction: %s, wrist position: %s, elbow position: %s" % (
-                arm.direction, # Vector for direction arm is pointing towards hand
-                arm.wrist_position, # X, Y, Z coordinate for the locaton of centre of wrist
-                arm.elbow_position) # X, Y, Z coordinate for the locaton of centre of elbow
+                arm.direction,  # Vector for direction arm is pointing towards hand
+                arm.wrist_position,  # X, Y, Z coordinate for the locaton of centre of wrist
+                arm.elbow_position)  # X, Y, Z coordinate for the locaton of centre of elbow
 
             # Get fingers
             for finger in hand.fingers:
@@ -105,30 +109,32 @@ class SampleListener(Leap.Listener):
                 # Calculate the angle swept since the last frame
                 swept_angle = 0
                 if circle.state != Leap.Gesture.STATE_START:
-                    previous_update = CircleGesture(controller.frame(1).gesture(circle.id))
-                    swept_angle =  (circle.progress - previous_update.progress) * 2 * Leap.PI
+                    previous_update = CircleGesture(
+                        controller.frame(1).gesture(circle.id))
+                    swept_angle = (circle.progress -
+                                   previous_update.progress) * 2 * Leap.PI
 
                 print "  Circle id: %d, %s, progress: %f, radius: %f, angle: %f degrees, %s" % (
-                        gesture.id, self.state_names[gesture.state],
-                        circle.progress, circle.radius, swept_angle * Leap.RAD_TO_DEG, clockwiseness)
+                    gesture.id, self.state_names[gesture.state],
+                    circle.progress, circle.radius, swept_angle * Leap.RAD_TO_DEG, clockwiseness)
 
             if gesture.type == Leap.Gesture.TYPE_SWIPE:
                 swipe = SwipeGesture(gesture)
                 print "  Swipe id: %d, state: %s, position: %s, direction: %s, speed: %f" % (
-                        gesture.id, self.state_names[gesture.state],
-                        swipe.position, swipe.direction, swipe.speed)
+                    gesture.id, self.state_names[gesture.state],
+                    swipe.position, swipe.direction, swipe.speed)
 
             if gesture.type == Leap.Gesture.TYPE_KEY_TAP:
                 keytap = KeyTapGesture(gesture)
                 print "  Key Tap id: %d, %s, position: %s, direction: %s" % (
-                        gesture.id, self.state_names[gesture.state],
-                        keytap.position, keytap.direction )
+                    gesture.id, self.state_names[gesture.state],
+                    keytap.position, keytap.direction)
 
             if gesture.type == Leap.Gesture.TYPE_SCREEN_TAP:
                 screentap = ScreenTapGesture(gesture)
                 print "  Screen Tap id: %d, %s, position: %s, direction: %s" % (
-                        gesture.id, self.state_names[gesture.state],
-                        screentap.position, screentap.direction )
+                    gesture.id, self.state_names[gesture.state],
+                    screentap.position, screentap.direction)
 
         if not (frame.hands.is_empty and frame.gestures().is_empty):
             print ""
@@ -146,7 +152,21 @@ class SampleListener(Leap.Listener):
         if state == Leap.Gesture.STATE_INVALID:
             return "STATE_INVALID"
 
+
 def main():
+
+    arduino = serial.Serial('COM3', 9600)
+
+    while True:
+        # time.sleep(2)
+        time.sleep(1)
+        arduino.write(100)
+        # bytesToRead = arduino.inWaiting()
+        # print arduino.read(bytesToRead).center
+        time.sleep(1)
+        arduino.write(0)
+        print "loop"
+
     # Create a sample listener and controller
     listener = SampleListener()
     controller = Leap.Controller()
