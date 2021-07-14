@@ -11,8 +11,11 @@ import sys
 import thread
 import time
 import serial
+import numpy
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
+from serial import SerialException
 
+arduino = serial.Serial('COM3', 9600)
 
 class SampleListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
@@ -43,55 +46,89 @@ class SampleListener(Leap.Listener):
         frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
         # print frame.hands.direction
 
-        print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d, tools: %d, gestures: %d" % (
-              frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools), len(frame.gestures()))
-        
+        # print "Frame id: %d, timestamp: %d, hands: %d, fingers: %d, tools: %d, gestures: %d" % (
+        #       frame.id, frame.timestamp, len(frame.hands), len(frame.fingers), len(frame.tools), len(frame.gestures()))
+
         # Get hands data from each frame
         # For loop repeats for each hand present in the frame
         for hand in frame.hands:
 
             handType = "Left hand" if hand.is_left else "Right hand"
 
-            print "  %s, id %d, position: %s" % (
-                handType, hand.id, hand.palm_position)
+            # print "  %s, id %d, position: %s" % (
+            #     handType, hand.id, hand.palm_position)
 
             # Get the hand's normal vector and direction
             normal = hand.palm_normal  # Normal vectors points outwards from palm
             direction = hand.direction  # Direction vector points from palm towards fingertips
+            data_confidence = hand.confidence
 
-            print "DIRECTION:"
-            print direction
-            
+            # print "DIRECTION:"
+            # print direction
+
             # Calculate the hand's pitch, roll, and yaw angles
-            print "  pitch: %f degrees, roll: %f degrees, yaw: %f degrees" % (
-                direction.pitch * Leap.RAD_TO_DEG,
-                normal.roll * Leap.RAD_TO_DEG,
-                direction.yaw * Leap.RAD_TO_DEG)
+            # print "  pitch: %f degrees, roll: %f degrees, yaw: %f degrees" % (
+            #     direction.pitch * Leap.RAD_TO_DEG,
+            #     normal.roll * Leap.RAD_TO_DEG,
+            #     direction.yaw * Leap.RAD_TO_DEG)
 
             # Get arm bone
             arm = hand.arm
-            print "  Arm direction: %s, wrist position: %s, elbow position: %s" % (
-                arm.direction,  # Vector for direction arm is pointing towards hand
-                arm.wrist_position,  # X, Y, Z coordinate for the locaton of centre of wrist
-                arm.elbow_position)  # X, Y, Z coordinate for the locaton of centre of elbow
+            # print "  Arm direction: %s, wrist position: %s, elbow position: %s" % (
+            #     arm.direction,  # Vector for direction arm is pointing towards hand
+            #     arm.wrist_position,  # X, Y, Z coordinate for the locaton of centre of wrist
+            #     arm.elbow_position)  # X, Y, Z coordinate for the locaton of centre of elbow
 
-            # # Get fingers
-            # for finger in hand.fingers:
+            resultant_vector_mag = [None] * 5
+            iterator = 0
+            # Get fingers
+            for finger in hand.fingers:
 
-            #     print "    %s finger, id: %d, length: %fmm, width: %fmm" % (
-            #         self.finger_names[finger.type],
-            #         finger.id,
-            #         finger.length,
-            #         finger.width)
+                iterator += 1
+                if iterator >=5:
+                    iterator = 0
+                # print "    %s finger, id: %d, length: %fmm, width: %fmm" % (
+                #     self.finger_names[finger.type],
+                #     finger.id,
+                #     finger.length,
+                #     finger.width)
+                if data_confidence >= 0.2:
+                    finger_resultant_direction = finger.direction - direction
+                    hand_vector, finger_vector = numpy.array([direction[0], direction[1], direction[2]]), numpy.array([finger.direction[0], finger.direction[1], finger.direction[2]])
+                    resultant_vector = numpy.subtract(finger_vector, hand_vector)
+                    resultant_vector_mag[iterator] = numpy.linalg.norm(resultant_vector)
 
-            #     # Get bones
-            #     for b in range(0, 4):
-            #         bone = finger.bone(b)
-            #         print "      Bone: %s, start: %s, end: %s, direction: %s" % (
-            #             self.bone_names[bone.type],
-            #             bone.prev_joint,
-            #             bone.next_joint,
-            #             bone.direction)
+                    # print (resultant_vector_mag[finger]),
+                    # print (data_confidence)
+
+                    # while True:
+                    #     # time.sleep(2)
+                    #     time.sleep(1)
+                    #     arduino.write(100)
+                    #     # bytesToRead = arduino.inWaiting()
+                    #     # print arduino.read(bytesToRead).center
+                    #     time.sleep(1)
+                    #     arduino.write(0)
+                    #     print "loop"
+
+                else:
+                    print "REALLIGN HAND: DATA CONFIDENCE TOO LOW"
+                    print (data_confidence)
+                    
+                time.sleep(0.5)
+                data = resultant_vector_mag[1]
+                arduino.write(data)
+
+                # angle = (numpy.dot(direction,finger.direction))/(numpy.dot(direction[0],finger.direction))
+                # print (finger_resultant_direction),
+                # Get bones
+                for b in range(0, 4):
+                    bone = finger.bone(b)
+                    # print "      Bone: %s, start: %s, end: %s, direction: %s" % (
+                    #     self.bone_names[bone.type],
+                    #     bone.prev_joint,
+                    #     bone.next_joint,
+                    #     bone.direction)
 
     #     # Get tools
     #     for tool in frame.tools:
