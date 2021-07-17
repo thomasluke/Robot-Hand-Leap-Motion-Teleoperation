@@ -17,6 +17,24 @@ from serial import SerialException
 
 arduino = serial.Serial('COM3', 9600)
 
+def unit_vector(vector):
+    """ Returns the unit vector of the vector.  """
+    return vector / numpy.linalg.norm(vector)
+
+def angle_between(v1, v2):
+    """ Returns the angle in radians between vectors 'v1' and 'v2'::
+
+            >>> angle_between((1, 0, 0), (0, 1, 0))
+            1.5707963267948966
+            >>> angle_between((1, 0, 0), (1, 0, 0))
+            0.0
+            >>> angle_between((1, 0, 0), (-1, 0, 0))
+            3.141592653589793
+    """
+    v1_u = unit_vector(v1)
+    v2_u = unit_vector(v2)
+    return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
+
 class SampleListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
@@ -52,6 +70,7 @@ class SampleListener(Leap.Listener):
         # Get hands data from each frame
         # For loop repeats for each hand present in the frame
         for hand in frame.hands:
+            finger_angles = []
 
             handType = "Left hand" if hand.is_left else "Right hand"
 
@@ -84,21 +103,27 @@ class SampleListener(Leap.Listener):
             # Get fingers
             for finger in hand.fingers:
 
-                iterator += 1
-                if iterator >=5:
-                    iterator = 0
-                # print "    %s finger, id: %d, length: %fmm, width: %fmm" % (
-                #     self.finger_names[finger.type],
-                #     finger.id,
-                #     finger.length,
-                #     finger.width)
-                if data_confidence >= 0.2:
-                    finger_resultant_direction = finger.direction - direction
-                    hand_vector, finger_vector = numpy.array([direction[0], direction[1], direction[2]]), numpy.array([finger.direction[0], finger.direction[1], finger.direction[2]])
-                    resultant_vector = numpy.subtract(finger_vector, hand_vector)
-                    resultant_vector_mag[iterator] = numpy.linalg.norm(resultant_vector)
+                # iterator += 1
+                # if iterator >=5:
+                #     iterator = 0
+                # # print "    %s finger, id: %d, length: %fmm, width: %fmm" % (
+                # #     self.finger_names[finger.type],
+                # #     finger.id,
+                # #     finger.length,
+                # #     finger.width)
+                # if data_confidence >= 0.2:
+                # finger_resultant_direction = finger.direction - direction
+                # hand_vector, finger_vector = numpy.array([direction[0], direction[1], direction[2]]), numpy.array([finger.direction[0], finger.direction[1], finger.direction[2]])
+                # resultant_vector = numpy.subtract(finger_vector, hand_vector)
+                # resultant_vector_mag[iterator] = numpy.linalg.norm(resultant_vector)
 
-                    # print (resultant_vector_mag[finger]),
+                finger_vector = numpy.array([finger.direction[0],finger.direction[1],finger.direction[2]])
+                hand_vector = numpy.array([hand.direction[0],hand.direction[1],hand.direction[2]])
+                
+                finger_angles.append(angle_between(finger_vector, hand_vector))
+                # resultant_finger_vector = numpy.linalg.norm(finger_vector)
+
+                # time.sleep(0.01)
                     # print (data_confidence)
 
                     # while True:
@@ -111,14 +136,13 @@ class SampleListener(Leap.Listener):
                     #     arduino.write(0)
                     #     print "loop"
 
-                else:
-                    print "REALLIGN HAND: DATA CONFIDENCE TOO LOW"
-                    print (data_confidence)
+                # else:
+                #     print "REALLIGN HAND: DATA CONFIDENCE TOO LOW"
+                #     print (data_confidence)
                     
-                time.sleep(0.5)
-                data = resultant_vector_mag[1]
-                arduino.write(data)
-
+                # time.sleep(0.5)
+                # data = resultant_vector_mag[1]
+                # arduino.write(data)
                 # angle = (numpy.dot(direction,finger.direction))/(numpy.dot(direction[0],finger.direction))
                 # print (finger_resultant_direction),
                 # Get bones
@@ -129,6 +153,24 @@ class SampleListener(Leap.Listener):
                     #     bone.prev_joint,
                     #     bone.next_joint,
                     #     bone.direction)
+            print("\n")
+            
+
+            # if frame.hands.isLeft:
+            #     print ("Left Hand")
+            # elif frame.hands.isRight:
+            #     print ("Right Hand")
+            # else:
+            #     print ("Hand Unknown")
+            for i in finger_angles:
+                print finger_angles[int(i)]
+            # print (angle_between(finger_vector, hand_vector)),
+            pointer_servo_angle = finger_angles[1]*(180/3)
+            # print pointer_servo_angle
+            arduino.write(int(pointer_servo_angle))
+
+
+
 
     #     # Get tools
     #     for tool in frame.tools:

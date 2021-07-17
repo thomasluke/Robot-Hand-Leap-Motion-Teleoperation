@@ -27,9 +27,9 @@ void loop()
 if (Serial.available() > 0) // Only run when serial data is received
 {
     data = Serial.read();
-    data_conversion_factor = (180/(1.9-0.2));
-    data_angle_pointer = (data) * data_conversion_factor;
+    // data_conversion_factor = (180/(1.9-0.2));
+    // data_angle_pointer = (data) * data_conversion_factor;
 
-    servo_pointer.write(data_angle_pointer);
+    servo_pointer.write(data);
 }
 }
