@@ -12,6 +12,7 @@ import thread
 import time
 import serial
 import numpy
+import struct
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
@@ -155,7 +156,7 @@ class SampleListener(Leap.Listener):
                     #     bone.direction)
             print("\n")
             
-
+            # time.sleep(0.1)
             # if frame.hands.isLeft:
             #     print ("Left Hand")
             # elif frame.hands.isRight:
@@ -165,9 +166,16 @@ class SampleListener(Leap.Listener):
             for i in finger_angles:
                 print finger_angles[int(i)]
             # print (angle_between(finger_vector, hand_vector)),
-            pointer_servo_angle = finger_angles[1]*(180/3)
-            # print pointer_servo_angle
-            arduino.write(int(pointer_servo_angle))
+            pointer_servo_angle = int(finger_angles[1]*(180/3))
+
+
+            print pointer_servo_angle
+            # arduino.write(str(pointer_servo_angle))
+            arduino.write(struct.pack('>B', pointer_servo_angle))
+            # time.sleep(0.05)
+            # reachedPos = str(arduino.readline())        # read serial port for arduino echo
+            # print  reachedPos                               # print arduino echo to console
+            # arduino.write(pack('>BBB,45,90,180'))
 
 
 
