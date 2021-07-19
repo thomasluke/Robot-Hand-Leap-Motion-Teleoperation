@@ -3,6 +3,10 @@
         "vector": "cpp",
         "xstring": "cpp",
         "xutility": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "sstream": "cpp",
+        "ios": "cpp",
+        "system_error": "cpp",
+        "xiosbase": "cpp"
     }
 }

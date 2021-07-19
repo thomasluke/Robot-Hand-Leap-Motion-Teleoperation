@@ -13,6 +13,7 @@ import time
 import serial
 import numpy
 import struct
+import json
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
@@ -163,15 +164,39 @@ class SampleListener(Leap.Listener):
             #     print ("Right Hand")
             # else:
             #     print ("Hand Unknown")
+            
             for i in finger_angles:
                 print finger_angles[int(i)]
+            
+            servo_angles = []
+            index = 0
+            while index<=4:
+                servo_angles.append(int(finger_angles[index]*(180/3)))
+                index = index + 1
+            servo_angles.append('\n')
+            message = bytearray(servo_angles)
+            time.sleep(0.1)
+            arduino.write(message)
+
+                # time.sleep(0.1)
+            # message = str(int(finger_angles[int(0)]*(180/3)))+"\n"+str(int(finger_angles[int(1)]*(180/3)))+"\n"+str(int(finger_angles[int(2)]*(180/3)))+"\n"+str(int(finger_angles[int(3)]*(180/3)))+"\n"+str(int(finger_angles[int(4)]*(180/3)))+"\n"
+            # print message
+            # arduino.write(struct.pack('>B', message))
+            # arduino.write(json.dumps(servo_angles)) # https://arduino.stackexchange.com/questions/3753/how-to-send-numbers-to-arduino-uno-via-python-3-and-the-module-serial
+            # arduino.write(struct.pack('>B', int(finger_angles[int(1)]*(180/3)))) # https://arduino.stackexchange.com/questions/3753/how-to-send-numbers-to-arduino-uno-via-python-3-and-the-module-serial
+            # arduino.write(struct.pack('>B', int(finger_angles[int(2)]*(180/3)))) # https://arduino.stackexchange.com/questions/3753/how-to-send-numbers-to-arduino-uno-via-python-3-and-the-module-serial
+            # arduino.write(struct.pack('>B', int(finger_angles[int(3)]*(180/3)))) # https://arduino.stackexchange.com/questions/3753/how-to-send-numbers-to-arduino-uno-via-python-3-and-the-module-serial
+            # arduino.write(struct.pack('>B', int(finger_angles[int(4)]*(180/3)))) # https://arduino.stackexchange.com/questions/3753/how-to-send-numbers-to-arduino-uno-via-python-3-and-the-module-serial
+            
             # print (angle_between(finger_vector, hand_vector)),
-            pointer_servo_angle = int(finger_angles[1]*(180/3))
+            # pointer_servo_angle = int(finger_angles[1]*(180/3))
 
 
-            print pointer_servo_angle
+            # print pointer_servo_angle
             # arduino.write(str(pointer_servo_angle))
-            arduino.write(struct.pack('>B', pointer_servo_angle))
+            # values = bytearray(finger_angles)
+            # ser.write(values)
+            # arduino.write(struct.pack('>B', pointer_servo_angle)) # https://arduino.stackexchange.com/questions/3753/how-to-send-numbers-to-arduino-uno-via-python-3-and-the-module-serial
             # time.sleep(0.05)
             # reachedPos = str(arduino.readline())        # read serial port for arduino echo
             # print  reachedPos                               # print arduino echo to console
