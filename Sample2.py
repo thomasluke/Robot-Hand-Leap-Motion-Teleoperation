@@ -165,8 +165,8 @@ class SampleListener(Leap.Listener):
             # else:
             #     print ("Hand Unknown")
             
-            for i in finger_angles:
-                print finger_angles[int(i)]
+            # for i in finger_angles:
+            #     print finger_angles[int(i)]
             
             servo_angles = []
             index = 0
@@ -174,11 +174,15 @@ class SampleListener(Leap.Listener):
                 servo_angles.append(int(finger_angles[index]*(180/3)))
                 index = index + 1
             servo_angles.append('\n')
-            message = bytearray(servo_angles)
-            time.sleep(0.1)
-            arduino.write(message)
-
-                # time.sleep(0.1)
+            # print servo_angles[4]
+            # message = bytearray(servo_angles)
+            # time.sleep(0.1)
+            # arduino.write('ready')
+            # test = servo_angles[2]
+            arduino.write('\n')
+            arduino.write(struct.pack('>5b', servo_angles[0]/2, servo_angles[1]/2, servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
+            print (str(servo_angles[0]) + "," + str(servo_angles[1]) + "," + str(servo_angles[2]) + "," + str(servo_angles[3]) + "," + str(servo_angles[4]))
+            # time.sleep(0.1)
             # message = str(int(finger_angles[int(0)]*(180/3)))+"\n"+str(int(finger_angles[int(1)]*(180/3)))+"\n"+str(int(finger_angles[int(2)]*(180/3)))+"\n"+str(int(finger_angles[int(3)]*(180/3)))+"\n"+str(int(finger_angles[int(4)]*(180/3)))+"\n"
             # print message
             # arduino.write(struct.pack('>B', message))

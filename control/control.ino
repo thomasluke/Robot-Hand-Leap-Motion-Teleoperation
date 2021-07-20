@@ -1,15 +1,22 @@
-
 #include <Servo.h>
 #include <LiquidCrystal_I2C.h>
 //#include <ArduinoJson.h>
 
 int data;
+int test_data;
 String data_string;
 double data_conversion_factor;
 double data_angle_pointer;
 bool finished = true;
 char buffer[6];
+char test_buffer[2];
 int servo_angle = 0;
+
+int servo_thumb_angle;
+int servo_pointer_angle;
+int servo_index_angle;
+int servo_ring_angle;
+int servo_pinky_angle;
 
 Servo servo_thumb;
 Servo servo_pointer;
@@ -34,52 +41,36 @@ void setup()
 void loop()
 {
 
-  //    lcd.setCursor(1,0);
-  //    lcd.print("test");
   // put your main code here, to run repeatedly:
-//  delay(100);
-Serial.flush();
-  if (Serial.available()>5) // Only run when serial data is received
-  {   
-    
-    // finished == false;
-    // data = Serial.read();
-    
+  // delay(100);
+  if (Serial.available() > 0 && Serial.read() == '\n') // Only run when serial data is received
+  {
+
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
-//    data = Serial.read();
-    // data = [ord(data) for data in frame]
-    
-    // buffer[5] = data;
-    // Serial.println(i);
-    // data = data_string.toInt();
-    // finished == true;
-    // Serial.println(data_string);
-    // data = Serial.read();
-    // Serial.print("Received Value: ");
-    // Serial.println(a);
-    //    data = data_string.toInt();
-    // data = int(Serial.read()-'0');
+
+    servo_thumb_angle = buffer[0] * 2;
+    servo_pointer_angle = buffer[1] * 2 ;
+    servo_index_angle = buffer[2] * 2;
+    servo_ring_angle = buffer[3] * 2;
+    servo_pinky_angle = buffer[4] * 2;
 
     lcd.clear();
-    lcd.setCursor(1, 0);
-    lcd.print(abs(buffer[2]-'0'));
-    lcd.setCursor(1, 1);
-//      Serial.flush();
-    lcd.print(abs(buffer[1]-'0'));
-    lcd.setCursor(5, 1);
-    lcd.print(Serial.available());
-    // lcd.setCursor(1, 1);
-    // lcd.print(Serial.available());
-    // lcd.print(abs(buffer[1]-'0'));
-    // data_conversion_factor = (180/(1.9-0.2));
-    // data_angle_pointer = (data) * data_conversion_factor;
-    // while(1)
-    // {
-    //    servo_pointer.write(atoi(data));
-    // }
-    // }
-    //}    delay(100);
-    servo_angle = abs(buffer[1]-'0');
+    lcd.setCursor(0, 1);
+    lcd.print(servo_thumb_angle);
+    lcd.setCursor(0, 0);
+    lcd.print(servo_pointer_angle);
+    lcd.setCursor(4, 0);
+    lcd.print(servo_index_angle);
+    lcd.setCursor(8, 0);
+    lcd.print(servo_ring_angle);
+    lcd.setCursor(12, 0);
+    lcd.print(servo_pinky_angle);
+
+    lcd.setCursor(12, 1);
+    lcd.print(Serial.available()); // Number of bytes in the serial buffer (64 max - 0 -> 63)
+
+    //    Serial.flush();
   }
-  servo_pointer.write(servo_angle);
+
+  servo_pointer.write(buffer[1] * 2);
 }
