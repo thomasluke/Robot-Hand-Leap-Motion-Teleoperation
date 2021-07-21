@@ -101,7 +101,7 @@ class SampleListener(Leap.Listener):
             #     arm.elbow_position)  # X, Y, Z coordinate for the locaton of centre of elbow
 
             resultant_vector_mag = [None] * 5
-            iterator = 0
+            index = 0
             # Get fingers
             for finger in hand.fingers:
 
@@ -121,8 +121,15 @@ class SampleListener(Leap.Listener):
 
                 finger_vector = numpy.array([finger.direction[0],finger.direction[1],finger.direction[2]])
                 hand_vector = numpy.array([hand.direction[0],hand.direction[1],hand.direction[2]])
+                hand_normal_vector = numpy.array([hand.palm_normal[0],hand.palm_normal[1],hand.palm_normal[2]])
                 
-                finger_angles.append(angle_between(finger_vector, hand_vector))
+                if index == 0:
+                    finger_angles.append(angle_between(finger_vector, hand_normal_vector))             
+                else:
+                    finger_angles.append(angle_between(finger_vector, hand_vector))
+
+                index = index + 1
+
                 # resultant_finger_vector = numpy.linalg.norm(finger_vector)
 
                 # time.sleep(0.01)
@@ -170,9 +177,13 @@ class SampleListener(Leap.Listener):
             
             servo_angles = []
             index = 0
-            while index<=4:
-                servo_angles.append(int(finger_angles[index]*(180/3)))
+            while index <= 4:
+                if index == 0:
+                    servo_angles.append(int(abs((180*3)-(finger_angles[index]*(180/0.6)))))
+                else:
+                    servo_angles.append(int(finger_angles[index]*(180/3)))
                 index = index + 1
+
             servo_angles.append('\n')
             # print servo_angles[4]
             # message = bytearray(servo_angles)
@@ -180,7 +191,7 @@ class SampleListener(Leap.Listener):
             # arduino.write('ready')
             # test = servo_angles[2]
             arduino.write('\n')
-            arduino.write(struct.pack('>5b', servo_angles[0]/2, servo_angles[1]/2, servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
+            arduino.write(struct.pack('>5b', servo_angles[0]/3, servo_angles[1]/2, servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
             print (str(servo_angles[0]) + "," + str(servo_angles[1]) + "," + str(servo_angles[2]) + "," + str(servo_angles[3]) + "," + str(servo_angles[4]))
             # time.sleep(0.1)
             # message = str(int(finger_angles[int(0)]*(180/3)))+"\n"+str(int(finger_angles[int(1)]*(180/3)))+"\n"+str(int(finger_angles[int(2)]*(180/3)))+"\n"+str(int(finger_angles[int(3)]*(180/3)))+"\n"+str(int(finger_angles[int(4)]*(180/3)))+"\n"
