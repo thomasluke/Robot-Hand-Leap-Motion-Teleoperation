@@ -1,0 +1,169 @@
+{u'pointables': [
+        {u'direction': [
+                -0.881834,
+                -0.104741,
+                -0.459781
+            ], u'stabilizedTipPosition': [
+                -15.1758,
+                128.674,
+                52.8318
+            ], u'tool': False, u'timeVisible': 1.47425, u'tipPosition': [
+                -13.4368,
+                127.334,
+                61.9072
+            ], u'touchZone': u'hovering', u'touchDistance': 0.120984, u'width': 20.25, u'length': 52.1164, u'tipVelocity': [
+                -46.6702,
+                13.2846,
+                212.086
+            ], u'handId': 1326, u'id': 13260
+        },
+        {u'direction': [
+                -0.649791,
+                -0.0753708,
+                -0.756367
+            ], u'stabilizedTipPosition': [
+                -21.9111,
+                166.904,
+                -16.0484
+            ], u'tool': False, u'timeVisible': 1.47425, u'tipPosition': [
+                -21.2979,
+                165.06,
+                -15.6541
+            ], u'touchZone': u'hovering', u'touchDistance': 0.399299, u'width': 19.3428, u'length': 58.8075, u'tipVelocity': [
+                -118.268,
+                493.952,
+                70.9285
+            ], u'handId': 1326, u'id': 13261
+        },
+        {u'direction': [
+                -0.519191,
+                0.0943784,
+                -0.849432
+            ], u'stabilizedTipPosition': [
+                2.64386,
+                181.385,
+                -44.4904
+            ], u'tool': False, u'timeVisible': 1.47425, u'tipPosition': [
+                2.22841,
+                179.391,
+                -43.94
+            ], u'touchZone': u'hovering', u'touchDistance': 0.405918, u'width': 18.9972, u'length': 67.0064, u'tipVelocity': [
+                -22.4634,
+                368.784,
+                71.1051
+            ], u'handId': 1326, u'id': 13262
+        },
+        {u'direction': [
+                -0.414353,
+                -0.167925,
+                -0.89449
+            ], u'stabilizedTipPosition': [
+                35.961,
+                157.542,
+                -52.543
+            ], u'tool': False, u'timeVisible': 1.47425, u'tipPosition': [
+                34.8227,
+                156.432,
+                -51.4277
+            ], u'touchZone': u'hovering', u'touchDistance': 0.336647, u'width': 18.077, u'length': 64.4285, u'tipVelocity': [
+                1.03913,
+                245.884,
+                -5.09453
+            ], u'handId': 1326, u'id': 13263
+        },
+        {u'direction': [
+                -0.270166,
+                -0.225224,
+                -0.936101
+            ], u'stabilizedTipPosition': [
+                73.7516,
+                148.002,
+                -43.7304
+            ], u'tool': False, u'timeVisible': 1.47425, u'tipPosition': [
+                72.4818,
+                147.583,
+                -42.9508
+            ], u'touchZone': u'hovering', u'touchDistance': 0.318406, u'width': 16.0574, u'length': 50.5107, u'tipVelocity': [
+                -6.41306,
+                199.376,
+                -19.3918
+            ], u'handId': 1326, u'id': 13264
+        }
+    ], u'timestamp': 710790888660L, u'currentFrameRate': 111.797, u'devices': [], u'gestures': [], u's': 1.42007, u'r': [
+        [
+            0.926651,
+            0.168609,
+            0.335989
+        ],
+        [
+            -0.095067,
+            0.969827,
+            -0.224494
+        ],
+        [
+            -0.363703,
+            0.176086,
+            0.914721
+        ]
+    ], u'interactionBox': {u'center': [
+            0.0,
+            200.0,
+            0.0
+        ], u'size': [
+            235.247,
+            235.247,
+            147.751
+        ]
+    }, u'hands': [
+        {u'direction': [
+                -0.518362,
+                0.289382,
+                -0.80471
+            ], u'timeVisible': 1.47425, u'palmVelocity': [
+                10.7241,
+                68.4769,
+                38.2865
+            ], u'sphereRadius': 96.702, u'palmPosition': [
+                63.4718,
+                157.409,
+                50.296
+            ], u'sphereCenter': [
+                50.346,
+                82.2365,
+                -0.0181273
+            ], u's': 1.42007, u'r': [
+                [
+                    0.926651,
+                    0.168609,
+                    0.335989
+                ],
+                [
+                    -0.095067,
+                    0.969827,
+                    -0.224494
+                ],
+                [
+                    -0.363703,
+                    0.176086,
+                    0.914721
+                ]
+            ], u'stabilizedPalmPosition': [
+                60.6492,
+                143.466,
+                47.7534
+            ], u'palmNormal': [
+                -0.187445,
+                -0.956569,
+                -0.223248
+            ], u'id': 1326, u't': [
+                25.4406,
+                8.52887,
+                -53.3121
+            ]
+        }
+    ], u'id': 9109005, u't': [
+        25.4406,
+        8.52887,
+        -53.3121
+    ]
+}
