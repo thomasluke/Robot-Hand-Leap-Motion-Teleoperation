@@ -22,6 +22,7 @@ from websocket import create_connection
 #  (http://127.0.0.1:6437)
 # ws = create_connection("ws://localhost:8080/websocket")
 ws = create_connection("ws://127.0.0.1:6437")
+# ws = create_connection("ws://192.168.126.1:6437")
 # print "Sending 'Hello, World'..."
 # ws.send("Hello, World")
 # print "Sent"
