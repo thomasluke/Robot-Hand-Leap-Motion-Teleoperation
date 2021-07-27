@@ -106,7 +106,7 @@ class SampleListener(Leap.Listener):
         # Get fingers
         # for pointables in resultj:
         for finger in resultj['pointables']:
-            
+        # while index<=4:    
             # print number_of_fingers
             # Converting finger and hand vectors in numpy library arrays
             finger_vector = numpy.array([resultj['pointables'][index]['direction'][0],resultj['pointables'][index]['direction'][1],resultj['pointables'][index]['direction'][2]])
@@ -130,7 +130,7 @@ class SampleListener(Leap.Listener):
             print str(servo_angles[index]),
             # Iterate index value used for array indexing
             index = index + 1
-
+        # print index
         # Adds a line space inbetween terminal messages
         print('\n')
         
