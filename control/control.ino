@@ -3,7 +3,7 @@
 //#include <ArduinoJson.h>
 
 int data;
-char buffer[6];
+char buffer[7];
 
 int servo_thumb_angle;
 int servo_pointer_angle;
@@ -59,6 +59,7 @@ void loop()
     servo_index_angle = buffer[2] * 2;
     servo_ring_angle = buffer[3] * 2;
     servo_pinky_angle = buffer[4] * 2;
+    servo_wrist_angle = buffer[5] * 2;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
@@ -66,6 +67,7 @@ void loop()
     servo_index.write(servo_index_angle);
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
+    servo_wrist.write(servo_wrist_angle);
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
 

@@ -76,6 +76,7 @@ class SampleListener(Leap.Listener):
             direction = hand.direction  # Direction vector points from palm towards fingertips
             data_confidence = hand.confidence           
             arm = hand.arm
+            roll = (normal.roll * Leap.RAD_TO_DEG)+90
 
             resultant_vector_mag = [None] * 5
             
@@ -104,7 +105,7 @@ class SampleListener(Leap.Listener):
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_vector))
                     # Conversion factor finger flexion values to servo motor rotation angle.  
-                    servo_angles.append(int(finger_flexion[index]*(180/3)))
+                    servo_angles.append(int(finger_flexion[index]*(180/2.5)))
                 
                 # Iterate index value used for array indexing
                 index = index + 1
@@ -116,10 +117,10 @@ class SampleListener(Leap.Listener):
             arduino.write('\n')
             
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>5b', servo_angles[0]/3, servo_angles[1]/2, servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
+            arduino.write(struct.pack('>6b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2))
             
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
-            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Index servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]))
+            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Index servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]) + ", " + "Wrist roll angle: " + str(roll))
             # time.sleep(0.1)
 
 def main():
