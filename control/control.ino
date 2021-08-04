@@ -3,7 +3,9 @@
 //#include <ArduinoJson.h>
 
 int data;
+int mode;
 char buffer[7];
+char mode_buffer[2];
 
 int servo_thumb_angle;
 int servo_pointer_angle;
@@ -46,8 +48,16 @@ void loop()
 
   // put your main code here, to run repeatedly:
   // delay(100);
-  // Only read serial data after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  if (Serial.available() > 0 && Serial.read() == '\n') // Only run when serial data is received
+
+  else if (Serial.available() > 0 && Serial.read() == 'mode') // Only run when serial data is received
+  {
+    // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
+    mode = Serial.readBytesUntil('\n', mode_buffer, sizeof(mode_buffer) - 1);
+  }
+
+  // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
+  // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
+  if ((mode == 1 || mode == 2) && (Serial.available() > 0 && Serial.read() == '\n')) // Only run when serial data is received
   {
 
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
@@ -93,5 +103,13 @@ void loop()
 
     // Serial.flush();
   }
-
+  // True if in mode 1 (Automatic control selection) or mode 3 (Glove control)
+  // True if serial data is not availble
+  else if (mode == 1 || mode == 3)
+  {
+    // Put glove control code here
+    // Can use LCD message to debug whether these mode if statements are working
+    // Main check will be to see whether this "else if" is triggered at the correct times in mode 1 (Automatic control). 
+    // Also need to make sure this mode doesnt trigger inbetween serial signals! (maybe/probably remove if too buggy?!?!)  
+  }
 }

@@ -124,24 +124,49 @@ class SampleListener(Leap.Listener):
             # time.sleep(0.1)
 
 def main():
+    
+    print "Select Control Mode: Please type 1, 2 or 3"
+    print "Mode 1: Automatic Control Selection" # Switches automatically between Leap Motion and glove control based on whether the Leap Motion is receiving frame data
+    print "Mode 2: Leap Motion Control"
+    print "Mode 3: Glove Control" 
 
-    # Create a sample listener and controller
-    listener = SampleListener()
-    controller = Leap.Controller()
+    while 1:
 
-    # Have the sample listener receive events from the controller
-    controller.add_listener(listener)
+        mode = raw_input()
+        
+        if mode == "1" or mode == "2" or mode == "3": 
+            
+            print "Control mode " + mode + " selected"
+            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            arduino.write('mode')
+                
+            # Serial write servo rotation angles in byte (binary) form to the Arduino code.
+            arduino.write(struct.pack('>1b', int(mode)))
 
-    # Keep this process running until Enter is pressed
-    print "Press Enter to quit..."
-    try:
-        sys.stdin.readline()
-    except KeyboardInterrupt:
-        pass
-    finally:
-        # Remove the sample listener when done
-        controller.remove_listener(listener)
+            break
+            
+        else:
 
+            print "Invalid mode selected. Please type '1', '2' or '3'"
+            
+    if mode == "1" or mode == "2":
 
+        # Create a sample listener and controller
+        listener = SampleListener()
+        controller = Leap.Controller()
+
+        # Have the sample listener receive events from the controller
+        controller.add_listener(listener)
+
+        # Keep this process running until Enter is pressed
+        print "Press Enter to quit..."
+        try:
+            sys.stdin.readline()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            # Remove the sample listener when done
+            controller.remove_listener(listener)
+    
 if __name__ == "__main__":
     main()
