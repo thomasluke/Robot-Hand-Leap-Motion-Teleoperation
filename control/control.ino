@@ -2,10 +2,13 @@
 #include <LiquidCrystal_I2C.h>
 //#include <ArduinoJson.h>
 
+int mode_switcher = 0;
 int data;
+int data2;
 int mode;
 char buffer[7];
 char mode_buffer[2];
+bool lock = false;
 
 int servo_thumb_angle;
 int servo_pointer_angle;
@@ -20,6 +23,20 @@ Servo servo_index;
 Servo servo_ring;
 Servo servo_pinky;
 Servo servo_wrist;
+
+//define the flex sensor input pins
+int flex_5 = A5;
+int flex_4 = A4;
+int flex_3 = A3;
+int flex_2 = A2;
+int flex_1 = A1;
+
+//define variables for flex sensor values
+int flex_5_val;
+int flex_4_val;
+int flex_3_val;
+int flex_2_val;
+int flex_1_val;
 
 // Setup the I2C LCD display
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
@@ -41,25 +58,60 @@ void setup()
 
   lcd.begin();
   lcd.backlight();
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Mode: -");
 }
 
 void loop()
 {
-
+if (mode_switcher < 500){
+  mode_switcher++;
+  lcd.setCursor(0, 1);
+  lcd.print("      ");
+  lcd.setCursor(0, 1);
+  lcd.print(mode_switcher);
+}
   // put your main code here, to run repeatedly:
   // delay(100);
 
-  else if (Serial.available() > 0 && Serial.read() == 'mode') // Only run when serial data is received
+  if (Serial.available() > 0 && Serial.read() == '\n' && lock == false) // Only run when serial data is received
   {
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
-    mode = Serial.readBytesUntil('\n', mode_buffer, sizeof(mode_buffer) - 1);
+    data2 = Serial.readBytesUntil('\n', mode_buffer, sizeof(mode_buffer) - 1);
+    mode = mode_buffer[0];
+    lock = true;
+
+    lcd.setCursor(6, 0);
+    lcd.print("          ");
+    
+    switch (mode) {
+      case 1:
+        lcd.setCursor(6, 0);
+        lcd.print("Auto");
+        break;
+      case 2:
+        lcd.setCursor(6, 0);
+        lcd.print("Leap");
+        break;
+      case 3:
+        lcd.setCursor(6, 0);
+        lcd.print("Glove");
+        break;
+      default:
+        lcd.setCursor(6, 0);
+        lcd.print("Error");
+        break;
+    }
+
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  if ((mode == 1 || mode == 2) && (Serial.available() > 0 && Serial.read() == '\n')) // Only run when serial data is received
+  if ((mode == 1 || mode == 2) && (Serial.available() > 0 && Serial.read() == '\n') && lock == true) // Only run when serial data is received
   {
-
+    mode_switcher = 0;
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
@@ -78,6 +130,10 @@ void loop()
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
+
+    lcd.print("        ");
+    lcd.setCursor(7, 1);
+    lcd.print("leap");
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
 
@@ -105,11 +161,38 @@ void loop()
   }
   // True if in mode 1 (Automatic control selection) or mode 3 (Glove control)
   // True if serial data is not availble
-  else if (mode == 1 || mode == 3)
+  else if ((mode == 1 || mode == 3) && mode_switcher >= 500)
   {
     // Put glove control code here
     // Can use LCD message to debug whether these mode if statements are working
-    // Main check will be to see whether this "else if" is triggered at the correct times in mode 1 (Automatic control). 
-    // Also need to make sure this mode doesnt trigger inbetween serial signals! (maybe/probably remove if too buggy?!?!)  
+    // Main check will be to see whether this "else if" is triggered at the correct times in mode 1 (Automatic control).
+    // Also need to make sure this mode doesnt trigger inbetween serial signals! (maybe/probably remove if too buggy?!?!)
+
+    flex_5_val = analogRead(flex_5);
+    flex_5_val = map(flex_5_val, 630, 730, 80, 20);
+
+    flex_4_val = analogRead(flex_4);
+    flex_4_val = map(flex_4_val, 520, 710, 70, 175);
+
+    flex_3_val = analogRead(flex_3);
+    flex_3_val = map(flex_3_val, 510, 680, 140, 10);
+
+    flex_2_val = analogRead(flex_2);
+    flex_2_val = map(flex_2_val, 580, 715, 90, 175);
+
+    flex_1_val = analogRead(flex_1);
+    flex_1_val = map(flex_1_val, 550, 700, 90, 175);
+
+    servo_thumb.write(flex_1_val);  //A1
+    servo_pointer.write(flex_2_val); //A2
+    servo_index.write(flex_3_val);  //A3
+    servo_ring.write(flex_4_val);  //A4
+    servo_pinky.write(flex_5_val);  //A5
+
+//    mode_switcher++;
+    lcd.setCursor(0, 1);
+    lcd.print("                ");
+    lcd.setCursor(0, 1);
+    lcd.print("glovemode");
   }
 }

@@ -133,12 +133,13 @@ def main():
     while 1:
 
         mode = raw_input()
-        
+
         if mode == "1" or mode == "2" or mode == "3": 
             
             print "Control mode " + mode + " selected"
+            
             # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
-            arduino.write('mode')
+            arduino.write('\n')
                 
             # Serial write servo rotation angles in byte (binary) form to the Arduino code.
             arduino.write(struct.pack('>1b', int(mode)))
