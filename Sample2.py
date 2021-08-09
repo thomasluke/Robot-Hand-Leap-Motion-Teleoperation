@@ -14,10 +14,12 @@ import serial
 import numpy
 import struct
 import json
+import keyboard
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
 arduino = serial.Serial('COM3', 9600)
+servo_angles = []
 
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
@@ -113,10 +115,10 @@ class SampleListener(Leap.Listener):
             # # Adds a line space inbetween terminal messages
             # print("\n")
             
-            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
             arduino.write('\n')
             
-            # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+            # # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
             arduino.write(struct.pack('>6b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2))
             
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
@@ -125,30 +127,31 @@ class SampleListener(Leap.Listener):
 
 def main():
     
-    print "Select Control Mode: Please type 1, 2 or 3"
+    print "Select Control Mode: Please type 1, 2, 3 or 4"
     print "Mode 1: Automatic Control Selection" # Switches automatically between Leap Motion and glove control based on whether the Leap Motion is receiving frame data
     print "Mode 2: Leap Motion Control"
     print "Mode 3: Glove Control" 
+    print "Mode 4: Keyboard Control"
 
     while 1:
 
         mode = raw_input()
 
-        if mode == "1" or mode == "2" or mode == "3": 
+        if mode == "1" or mode == "2" or mode == "3" or mode == "4": 
             
             print "Control mode " + mode + " selected"
             
-            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
             arduino.write('\n')
                 
-            # Serial write servo rotation angles in byte (binary) form to the Arduino code.
+            # # Serial write servo rotation angles in byte (binary) form to the Arduino code.
             arduino.write(struct.pack('>1b', int(mode)))
 
             break
             
         else:
 
-            print "Invalid mode selected. Please type '1', '2' or '3'"
+            print "Invalid mode selected. Please type '1', '2', '3', or '4'"
             
     if mode == "1" or mode == "2":
 
@@ -168,6 +171,32 @@ def main():
         finally:
             # Remove the sample listener when done
             controller.remove_listener(listener)
+    
+    elif mode == "4":
+
+        while True:
+
+            servo_angles = []
+
+            finger_keys = ["shift", "q", "w", "e", "r"]
+
+            for key in finger_keys:
+
+                if keyboard.is_pressed(key):
+                    servo_angles.append(180)
+                else:
+                    servo_angles.append(0)
+                    # servo_angles[idx] = 180       
+
+            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            arduino.write('\n')
+                
+            # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+            arduino.write(struct.pack('>5b', servo_angles[0]/2, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
+
+            # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
+            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Index servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]))
+            # time.sleep(0.1)
     
 if __name__ == "__main__":
     main()
