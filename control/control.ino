@@ -99,6 +99,10 @@ if (mode_switcher < 500){
         lcd.setCursor(6, 0);
         lcd.print("Glove");
         break;
+      case 4:
+        lcd.setCursor(6, 0);
+        lcd.print("Key");
+        break;
       default:
         lcd.setCursor(6, 0);
         lcd.print("Error");
@@ -194,5 +198,28 @@ if (mode_switcher < 500){
     lcd.print("                ");
     lcd.setCursor(0, 1);
     lcd.print("glovemode");
+  }
+  
+  else if (mode == 4)
+  {
+    // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
+    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+
+    // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
+    servo_thumb_angle = buffer[0] * 2;
+    servo_pointer_angle = buffer[1] * 2;
+    servo_index_angle = buffer[2] * 2;
+    servo_ring_angle = buffer[3] * 2;
+    servo_pinky_angle = buffer[4] * 2;
+    servo_wrist_angle = buffer[5] * 2;
+
+    // Rotate servo motors to the angles received through serial from Python
+    servo_thumb.write(servo_thumb_angle);
+    servo_pointer.write(servo_pointer_angle);
+    servo_index.write(servo_index_angle);
+    servo_ring.write(servo_ring_angle);
+    servo_pinky.write(servo_pinky_angle);
+    servo_wrist.write(servo_wrist_angle);
+
   }
 }
