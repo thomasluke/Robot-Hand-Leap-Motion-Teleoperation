@@ -6,9 +6,11 @@ int mode_switcher = 0;
 int data;
 int data2;
 int mode;
-char buffer[7];
+char buffer[8];
 char mode_buffer[2];
 bool lock = false;
+double leap_data_confidence;
+double glove_data_weight;
 
 int servo_thumb_angle;
 int servo_pointer_angle;
@@ -16,6 +18,13 @@ int servo_index_angle;
 int servo_ring_angle;
 int servo_pinky_angle;
 int servo_wrist_angle;
+
+int weighted_servo_thumb_angle;
+int weighted_servo_pointer_angle;
+int weighted_servo_index_angle;
+int weighted_servo_ring_angle;
+int weighted_servo_pinky_angle;
+int weighted_servo_wrist_angle;
 
 Servo servo_thumb;
 Servo servo_pointer;
@@ -66,13 +75,14 @@ void setup()
 
 void loop()
 {
-if (mode_switcher < 500){
-  mode_switcher++;
-  lcd.setCursor(0, 1);
-  lcd.print("      ");
-  lcd.setCursor(0, 1);
-  lcd.print(mode_switcher);
-}
+  if (mode_switcher < 500)
+  {
+    mode_switcher++;
+    lcd.setCursor(0, 1);
+    lcd.print("      ");
+    lcd.setCursor(0, 1);
+    lcd.print(mode_switcher);
+  }
   // put your main code here, to run repeatedly:
   // delay(100);
 
@@ -85,30 +95,34 @@ if (mode_switcher < 500){
 
     lcd.setCursor(6, 0);
     lcd.print("          ");
-    
-    switch (mode) {
-      case 1:
-        lcd.setCursor(6, 0);
-        lcd.print("Auto");
-        break;
-      case 2:
-        lcd.setCursor(6, 0);
-        lcd.print("Leap");
-        break;
-      case 3:
-        lcd.setCursor(6, 0);
-        lcd.print("Glove");
-        break;
-      case 4:
-        lcd.setCursor(6, 0);
-        lcd.print("Key");
-        break;
-      default:
-        lcd.setCursor(6, 0);
-        lcd.print("Error");
-        break;
-    }
 
+    switch (mode)
+    {
+    case 1:
+      lcd.setCursor(6, 0);
+      lcd.print("Auto");
+      break;
+    case 2:
+      lcd.setCursor(6, 0);
+      lcd.print("Leap");
+      break;
+    case 3:
+      lcd.setCursor(6, 0);
+      lcd.print("Glove");
+      break;
+    case 4:
+      lcd.setCursor(6, 0);
+      lcd.print("Key");
+      break;
+    case 5:
+      lcd.setCursor(6, 0);
+      lcd.print("Combined");
+      break;
+    default:
+      lcd.setCursor(6, 0);
+      lcd.print("Error");
+      break;
+    }
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
@@ -163,6 +177,58 @@ if (mode_switcher < 500){
 
     // Serial.flush();
   }
+
+  // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
+  // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
+  else if ((mode == 5) && (Serial.available() > 0 && Serial.read() == '\n') && lock == true) // Only run when serial data is received
+  {
+    mode_switcher = 0;
+    // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
+    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+
+    // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
+    servo_thumb_angle = buffer[0] * 3;
+    servo_pointer_angle = buffer[1] * 2;
+    servo_index_angle = buffer[2] * 2;
+    servo_ring_angle = buffer[3] * 2;
+    servo_pinky_angle = buffer[4] * 2;
+    servo_wrist_angle = buffer[5] * 2;
+
+    leap_data_confidence = buffer[6] / 100;
+
+    flex_5_val = analogRead(flex_5);
+    flex_4_val = analogRead(flex_4);
+    flex_3_val = analogRead(flex_3);
+    flex_2_val = analogRead(flex_2);
+    flex_1_val = analogRead(flex_1);
+
+    flex_5_val = map(flex_5_val, 630, 730, 80, 20);
+    flex_4_val = map(flex_4_val, 520, 710, 70, 175);
+    flex_3_val = map(flex_3_val, 510, 680, 140, 10);
+    flex_2_val = map(flex_2_val, 580, 715, 90, 175);
+    flex_1_val = map(flex_1_val, 550, 700, 90, 175);
+
+    // Weighted average combining Leap Motion Controller and Glove Control data
+    weighted_servo_thumb_angle = ((leap_data_confidence*servo_thumb_angle)+(glove_data_weight*flex_1_val)/(servo_thumb_angle+flex_1_val));
+    weighted_servo_pointer_angle = ((leap_data_confidence*servo_pointer_angle)+(glove_data_weight*flex_2_val)/(servo_pointer_angle+flex_2_val));
+    weighted_servo_index_angle = ((leap_data_confidence*servo_index_angle)+(glove_data_weight*flex_3_val)/(servo_index_angle+flex_3_val));
+    weighted_servo_ring_angle = ((leap_data_confidence*servo_ring_angle)+(glove_data_weight*flex_4_val)/(servo_ring_angle+flex_4_val));
+    weighted_servo_pinky_angle = ((leap_data_confidence*servo_pinky_angle)+(glove_data_weight*flex_5_val)/(servo_pinky_angle+flex_5_val));
+    // weighted_servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
+
+    // Rotate servo motors to the angles received through serial from Python
+    servo_thumb.write(weighted_servo_thumb_angle);
+    servo_pointer.write(weighted_servo_pointer_angle);
+    servo_index.write(weighted_servo_index_angle);
+    servo_ring.write(weighted_servo_ring_angle);
+    servo_pinky.write(weighted_servo_pinky_angle);
+    servo_wrist.write(weighted_servo_wrist_angle);
+
+    lcd.print("        ");
+    lcd.setCursor(7, 1);
+    lcd.print("combined");
+  }
+
   // True if in mode 1 (Automatic control selection) or mode 3 (Glove control)
   // True if serial data is not availble
   else if ((mode == 1 || mode == 3) && mode_switcher >= 500)
@@ -187,19 +253,19 @@ if (mode_switcher < 500){
     flex_1_val = analogRead(flex_1);
     flex_1_val = map(flex_1_val, 550, 700, 90, 175);
 
-    servo_thumb.write(flex_1_val);  //A1
+    servo_thumb.write(flex_1_val);   //A1
     servo_pointer.write(flex_2_val); //A2
-    servo_index.write(flex_3_val);  //A3
-    servo_ring.write(flex_4_val);  //A4
-    servo_pinky.write(flex_5_val);  //A5
+    servo_index.write(flex_3_val);   //A3
+    servo_ring.write(flex_4_val);    //A4
+    servo_pinky.write(flex_5_val);   //A5
 
-//    mode_switcher++;
+    //    mode_switcher++;
     lcd.setCursor(0, 1);
     lcd.print("                ");
     lcd.setCursor(0, 1);
     lcd.print("glovemode");
   }
-  
+
   else if (mode == 4)
   {
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
@@ -220,6 +286,5 @@ if (mode_switcher < 500){
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
-
   }
 }

@@ -78,7 +78,7 @@ class SampleListener(Leap.Listener):
             direction = hand.direction  # Direction vector points from palm towards fingertips
             data_confidence = hand.confidence           
             arm = hand.arm
-            roll = (normal.roll * Leap.RAD_TO_DEG)+90
+            roll = int((normal.roll * Leap.RAD_TO_DEG)+90)
 
             resultant_vector_mag = [None] * 5
             
@@ -112,48 +112,52 @@ class SampleListener(Leap.Listener):
                 # Iterate index value used for array indexing
                 index = index + 1
 
-            # # Adds a line space inbetween terminal messages
-            # print("\n")
+            # Adds a line space inbetween terminal messages
+            print("\n")
             
             # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
             arduino.write('\n')
             
             # # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>6b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2))
+            arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
             
+            # arduino.write(struct.pack('>6b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2)
+            # arduino.write(struct.pack('>1d', data_confidence))
+
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
-            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Index servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]) + ", " + "Wrist roll angle: " + str(roll))
+            print ("Finger Servo Angles - " + "Thumb: " + str(servo_angles[0]) + ", " + "Pointer: " + str(servo_angles[1]) + ", " + "Index: " + str(servo_angles[2]) + ", " + "Ring: " + str(servo_angles[3]) + ", " + "Pinky: " + str(servo_angles[4]) + ", " + "Wrist: " + str(roll) + " - data confidence: " + str(data_confidence))
             # time.sleep(0.1)
 
 def main():
     
-    print "Select Control Mode: Please type 1, 2, 3 or 4"
+    print "Select Control Mode: Please type 1, 2, 3, 4 or 5"
     print "Mode 1: Automatic Control Selection" # Switches automatically between Leap Motion and glove control based on whether the Leap Motion is receiving frame data
-    print "Mode 2: Leap Motion Control"
-    print "Mode 3: Glove Control" 
-    print "Mode 4: Keyboard Control"
+    print "Mode 2: Leap Motion Control" # Leap Motion hand tracking control
+    print "Mode 3: Glove Control" # Glove hand tracking control
+    print "Mode 4: Keyboard Control" # Shift, q, w, e, r keyboard press control
+    print "Mode 5: Combined Control" # Combined leap motoon and glove hand tracking control for potentially imporved accuracy
 
     while 1:
 
         mode = raw_input()
 
-        if mode == "1" or mode == "2" or mode == "3" or mode == "4": 
+        if mode == "1" or mode == "2" or mode == "3" or mode == "4" or mode == "5": 
             
             print "Control mode " + mode + " selected"
             
-            # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
             arduino.write('\n')
                 
-            # # Serial write servo rotation angles in byte (binary) form to the Arduino code.
+            # Serial write servo rotation angles in byte (binary) form to the Arduino code.
             arduino.write(struct.pack('>1b', int(mode)))
 
             break
             
         else:
 
-            print "Invalid mode selected. Please type '1', '2', '3', or '4'"
+            print "Invalid mode selected. Please type '1', '2', '3', '4' or '5'"
             
-    if mode == "1" or mode == "2":
+    if mode == "1" or mode == "2" or mode == "4" or mode == "5":
 
         # Create a sample listener and controller
         listener = SampleListener()
