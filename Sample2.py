@@ -15,6 +15,7 @@ import numpy
 import struct
 import json
 import keyboard
+import time
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
@@ -43,6 +44,9 @@ class SampleListener(Leap.Listener):
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
+    start = time.time()
+    end = time.time()
+    latency = 0.0
 
     def on_init(self, controller):
         print "Initialized"
@@ -127,6 +131,14 @@ class SampleListener(Leap.Listener):
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
             print ("Finger Servo Angles - " + "Thumb: " + str(servo_angles[0]) + ", " + "Pointer: " + str(servo_angles[1]) + ", " + "Index: " + str(servo_angles[2]) + ", " + "Ring: " + str(servo_angles[3]) + ", " + "Pinky: " + str(servo_angles[4]) + ", " + "Wrist: " + str(roll) + " - data confidence: " + str(data_confidence))
             # time.sleep(0.1)
+            
+        self.end = time.time()
+        self.latency = (self.end - self.start)*1000
+        print("Latency (ms): " + str(self.latency))
+        self.start = time.time()
+        # Code is hanging on this read line. Maybe because the Arduino code never gets up to sending the message to be read? Or something else?
+        # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
+        # print (arduino_code_latency)
 
 def main():
     
@@ -175,7 +187,7 @@ def main():
         finally:
             # Remove the sample listener when done
             controller.remove_listener(listener)
-    
+            
     elif mode == "4":
 
         while True:

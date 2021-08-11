@@ -12,6 +12,10 @@ bool lock = false;
 double leap_data_confidence;
 double glove_data_weight;
 
+unsigned long StartTime = millis();
+unsigned long CurrentTime;
+unsigned long ElapsedTime;
+
 int servo_thumb_angle;
 int servo_pointer_angle;
 int servo_index_angle;
@@ -149,6 +153,12 @@ void loop()
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
 
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - StartTime;
+    Serial.println(ElapsedTime);
+    Serial.println("\n");
+    StartTime = millis();
+
     lcd.print("        ");
     lcd.setCursor(7, 1);
     lcd.print("leap");
@@ -209,11 +219,11 @@ void loop()
     flex_1_val = map(flex_1_val, 550, 700, 90, 175);
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    weighted_servo_thumb_angle = ((leap_data_confidence*servo_thumb_angle)+(glove_data_weight*flex_1_val)/(servo_thumb_angle+flex_1_val));
-    weighted_servo_pointer_angle = ((leap_data_confidence*servo_pointer_angle)+(glove_data_weight*flex_2_val)/(servo_pointer_angle+flex_2_val));
-    weighted_servo_index_angle = ((leap_data_confidence*servo_index_angle)+(glove_data_weight*flex_3_val)/(servo_index_angle+flex_3_val));
-    weighted_servo_ring_angle = ((leap_data_confidence*servo_ring_angle)+(glove_data_weight*flex_4_val)/(servo_ring_angle+flex_4_val));
-    weighted_servo_pinky_angle = ((leap_data_confidence*servo_pinky_angle)+(glove_data_weight*flex_5_val)/(servo_pinky_angle+flex_5_val));
+    weighted_servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle) + (glove_data_weight * flex_1_val) / (servo_thumb_angle + flex_1_val));
+    weighted_servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle) + (glove_data_weight * flex_2_val) / (servo_pointer_angle + flex_2_val));
+    weighted_servo_index_angle = ((leap_data_confidence * servo_index_angle) + (glove_data_weight * flex_3_val) / (servo_index_angle + flex_3_val));
+    weighted_servo_ring_angle = ((leap_data_confidence * servo_ring_angle) + (glove_data_weight * flex_4_val) / (servo_ring_angle + flex_4_val));
+    weighted_servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle) + (glove_data_weight * flex_5_val) / (servo_pinky_angle + flex_5_val));
     // weighted_servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
     // Rotate servo motors to the angles received through serial from Python
