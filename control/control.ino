@@ -127,13 +127,16 @@ void loop()
       lcd.print("Error");
       break;
     }
+        Serial.flush();
+
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  if ((mode == 1 || mode == 2) && (Serial.available() > 0 && Serial.read() == '\n') && lock == true) // Only run when serial data is received
+  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   {
     mode_switcher = 0;
+    memset(buffer, 0, sizeof(buffer));
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
@@ -153,11 +156,11 @@ void loop()
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
 
-    CurrentTime = millis();
-    ElapsedTime = CurrentTime - StartTime;
-    Serial.println(ElapsedTime);
+    // CurrentTime = millis();
+    // ElapsedTime = CurrentTime - StartTime;
+    // Serial.println(ElapsedTime);
     Serial.println("\n");
-    StartTime = millis();
+    // StartTime = millis();
 
     lcd.print("        ");
     lcd.setCursor(7, 1);
@@ -185,12 +188,12 @@ void loop()
     // lcd.setCursor(12, 1);
     // lcd.print(Serial.available()); // Number of bytes in the serial buffer (64 max - 0 -> 63)
 
-    // Serial.flush();
+    Serial.flush();
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  else if ((mode == 5) && (Serial.available() > 0 && Serial.read() == '\n') && lock == true) // Only run when serial data is received
+  else if (mode == 5 && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   {
     mode_switcher = 0;
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
