@@ -18,21 +18,21 @@ unsigned long ElapsedTime;
 
 int servo_thumb_angle;
 int servo_pointer_angle;
-int servo_index_angle;
+int servo_middle_angle;
 int servo_ring_angle;
 int servo_pinky_angle;
 int servo_wrist_angle;
 
 int weighted_servo_thumb_angle;
 int weighted_servo_pointer_angle;
-int weighted_servo_index_angle;
+int weighted_servo_middle_angle;
 int weighted_servo_ring_angle;
 int weighted_servo_pinky_angle;
 int weighted_servo_wrist_angle;
 
 Servo servo_thumb;
 Servo servo_pointer;
-Servo servo_index;
+Servo servo_middle;
 Servo servo_ring;
 Servo servo_pinky;
 Servo servo_wrist;
@@ -64,7 +64,7 @@ void setup()
   // Attach servo motors to their respective Arduino PWM pins.
   servo_thumb.attach(3);
   servo_pointer.attach(5);
-  servo_index.attach(6);
+  servo_middle.attach(6);
   servo_ring.attach(9);
   servo_pinky.attach(10);
   servo_wrist.attach(11);
@@ -143,7 +143,7 @@ void loop()
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle = buffer[0] * 3;
     servo_pointer_angle = buffer[1] * 2;
-    servo_index_angle = buffer[2] * 2;
+    servo_middle_angle = buffer[2] * 2;
     servo_ring_angle = buffer[3] * 2;
     servo_pinky_angle = buffer[4] * 2;
     servo_wrist_angle = buffer[5] * 2;
@@ -151,7 +151,7 @@ void loop()
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
     servo_pointer.write(servo_pointer_angle);
-    servo_index.write(servo_index_angle);
+    servo_middle.write(servo_middle_angle);
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
@@ -177,7 +177,7 @@ void loop()
     // lcd.print(servo_pointer_angle);
 
     // lcd.setCursor(4, 0);
-    // lcd.print(servo_index_angle);
+    // lcd.print(servo_middle_angle);
 
     // lcd.setCursor(8, 0);
     // lcd.print(servo_ring_angle);
@@ -202,7 +202,7 @@ void loop()
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle = buffer[0] * 3;
     servo_pointer_angle = buffer[1] * 2;
-    servo_index_angle = buffer[2] * 2;
+    servo_middle_angle = buffer[2] * 2;
     servo_ring_angle = buffer[3] * 2;
     servo_pinky_angle = buffer[4] * 2;
     servo_wrist_angle = buffer[5] * 2;
@@ -224,7 +224,7 @@ void loop()
     // Weighted average combining Leap Motion Controller and Glove Control data
     weighted_servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle) + (glove_data_weight * flex_1_val) / (servo_thumb_angle + flex_1_val));
     weighted_servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle) + (glove_data_weight * flex_2_val) / (servo_pointer_angle + flex_2_val));
-    weighted_servo_index_angle = ((leap_data_confidence * servo_index_angle) + (glove_data_weight * flex_3_val) / (servo_index_angle + flex_3_val));
+    weighted_servo_middle_angle = ((leap_data_confidence * servo_middle_angle) + (glove_data_weight * flex_3_val) / (servo_middle_angle + flex_3_val));
     weighted_servo_ring_angle = ((leap_data_confidence * servo_ring_angle) + (glove_data_weight * flex_4_val) / (servo_ring_angle + flex_4_val));
     weighted_servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle) + (glove_data_weight * flex_5_val) / (servo_pinky_angle + flex_5_val));
     // weighted_servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
@@ -232,7 +232,7 @@ void loop()
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(weighted_servo_thumb_angle);
     servo_pointer.write(weighted_servo_pointer_angle);
-    servo_index.write(weighted_servo_index_angle);
+    servo_middle.write(weighted_servo_middle_angle);
     servo_ring.write(weighted_servo_ring_angle);
     servo_pinky.write(weighted_servo_pinky_angle);
     servo_wrist.write(weighted_servo_wrist_angle);
@@ -268,7 +268,7 @@ void loop()
 
     servo_thumb.write(flex_1_val);   //A1
     servo_pointer.write(flex_2_val); //A2
-    servo_index.write(flex_3_val);   //A3
+    servo_middle.write(flex_3_val);   //A3
     servo_ring.write(flex_4_val);    //A4
     servo_pinky.write(flex_5_val);   //A5
 
@@ -287,7 +287,7 @@ void loop()
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle = buffer[0] * 2;
     servo_pointer_angle = buffer[1] * 2;
-    servo_index_angle = buffer[2] * 2;
+    servo_middle_angle = buffer[2] * 2;
     servo_ring_angle = buffer[3] * 2;
     servo_pinky_angle = buffer[4] * 2;
     servo_wrist_angle = buffer[5] * 2;
@@ -295,7 +295,7 @@ void loop()
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
     servo_pointer.write(servo_pointer_angle);
-    servo_index.write(servo_index_angle);
+    servo_middle.write(servo_middle_angle);
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);

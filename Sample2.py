@@ -16,6 +16,7 @@ import struct
 import json
 import keyboard
 import time
+import csv
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
@@ -41,19 +42,21 @@ def angle_between(v1, v2):
     return numpy.arccos(numpy.clip(numpy.dot(v1_u, v2_u), -1.0, 1.0))
 
 class SampleListener(Leap.Listener):
+    
     finger_names = ['Thumb', 'Index', 'Middle', 'Ring', 'Pinky']
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
-   
+
     start_leap = time.time()
     end_leap = time.time()
     latency_leap = 0.0
-    
+
     start_arduino = time.time()
     end_arduino = time.time()
     latency_arduino = 0.0
 
     iterator = 0
+    rows = []
 
     def measure_latency(self, controller):
 
@@ -77,11 +80,33 @@ class SampleListener(Leap.Listener):
             latency_difference = self.latency_arduino - self.latency_leap
             latency_total = self.latency_arduino + self.latency_leap
             print("Latency Leap - Averaged (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency difference (ms): " + str(latency_difference) + " Latency total (ms): " + str(latency_total))
-            self.start_arduino = time.time()
 
+            # rows = [str(self.latency_leap),str(self.latency_arduino),str(self.latency_difference),str(self.latency_total)]        
+            self.rows.append([str(self.latency_leap),str(self.latency_arduino),str(self.latency_difference),str(self.latency_total)])
+                                  
+            self.start_arduino = time.time()
+            
             # Reset values used to calculate latency_leap average
             self.latency_leap = 0
             self.iterator = 0
+        
+        if keyboard.is_pressed("s"):
+
+                fields = ["Latency Leap", "Latency Arduino", "Latency Difference", "Latency Total"]
+
+                # name of csv file 
+                filename = "Latency Data.csv"
+        
+                # writing to csv file 
+                with open(filename, 'w') as csvfile: 
+                    # creating a csv writer object 
+                    csvwriter = csv.writer(csvfile) 
+                        
+                    # writing the fields 
+                    csvwriter.writerow(fields) 
+                        
+                    # writing the data rows 
+                    csvwriter.writerows(self.rows)
         # Code is hanging on this read line. Maybe because the Arduino code never gets up to sending the message to be read? Or something else?
         # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
         # print (arduino_code_latency)    
@@ -167,7 +192,7 @@ class SampleListener(Leap.Listener):
             # arduino.write(struct.pack('>1d', data_confidence))
 
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
-            print ("Finger Servo Angles - " + "Thumb: " + str(servo_angles[0]) + ", " + "Pointer: " + str(servo_angles[1]) + ", " + "Index: " + str(servo_angles[2]) + ", " + "Ring: " + str(servo_angles[3]) + ", " + "Pinky: " + str(servo_angles[4]) + ", " + "Wrist: " + str(roll) + " - data confidence: " + str(data_confidence))
+            print ("Finger Servo Angles - " + "Thumb: " + str(servo_angles[0]) + ", " + "Pointer: " + str(servo_angles[1]) + ", " + "Middle: " + str(servo_angles[2]) + ", " + "Ring: " + str(servo_angles[3]) + ", " + "Pinky: " + str(servo_angles[4]) + ", " + "Wrist: " + str(roll) + " - data confidence: " + str(data_confidence))
             # time.sleep(0.1)
 
             self.measure_latency(controller)
@@ -243,7 +268,7 @@ def main():
             arduino.write(struct.pack('>5b', servo_angles[0]/2, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
 
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
-            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Index servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]))
+            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Middle servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]))
             # time.sleep(0.1)
     
 if __name__ == "__main__":
