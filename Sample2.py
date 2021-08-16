@@ -47,19 +47,11 @@ class SampleListener(Leap.Listener):
     bone_names = ['Metacarpal', 'Proximal', 'Intermediate', 'Distal']
     state_names = ['STATE_INVALID', 'STATE_START', 'STATE_UPDATE', 'STATE_END']
 
-    start_leap = time.time()
-    end_leap = time.time()
-    latency_leap = 0.0
-
-    start_arduino = time.time()
-    end_arduino = time.time()
-    latency_arduino = 0.0
-
-    iterator = 0
-    rows = []
+    
+    # rows = []
+    # rows.append(0)
 
     def measure_latency(self, controller):
-
         # Calculating average latency from the leap motion controller and python code.
         self.end_leap = time.time()
         self.latency_leap = self.latency_leap + ((self.end_leap - self.start_leap)*1000)
@@ -75,14 +67,14 @@ class SampleListener(Leap.Listener):
             arduino.reset_input_buffer()
             # print arduino.in_waiting
             # latency_leap is calculated to be the average latency over the time between Arduino actions/latency
+            self.number = self.number + 1
             self.latency_leap = self.latency_leap/self.iterator
             self.latency_arduino = (self.end_arduino - self.start_arduino)*1000
             latency_difference = self.latency_arduino - self.latency_leap
             latency_total = self.latency_arduino + self.latency_leap
             print("Latency Leap - Averaged (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency difference (ms): " + str(latency_difference) + " Latency total (ms): " + str(latency_total))
 
-            # rows = [str(self.latency_leap),str(self.latency_arduino),str(self.latency_difference),str(self.latency_total)]        
-            self.rows.append([str(self.latency_leap),str(self.latency_arduino),str(self.latency_difference),str(self.latency_total)])
+            self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_difference),str(latency_total)])
                                   
             self.start_arduino = time.time()
             
@@ -91,14 +83,14 @@ class SampleListener(Leap.Listener):
             self.iterator = 0
         
         if keyboard.is_pressed("s"):
-
-                fields = ["Latency Leap", "Latency Arduino", "Latency Difference", "Latency Total"]
+                
+                fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Difference", "Latency Total"]
 
                 # name of csv file 
                 filename = "Latency Data.csv"
         
                 # writing to csv file 
-                with open(filename, 'w') as csvfile: 
+                with open(filename, 'wb') as csvfile: 
                     # creating a csv writer object 
                     csvwriter = csv.writer(csvfile) 
                         
@@ -107,12 +99,25 @@ class SampleListener(Leap.Listener):
                         
                     # writing the data rows 
                     csvwriter.writerows(self.rows)
+                
+                print "LATENCY DATA SAVED TO CSV FILE" 
         # Code is hanging on this read line. Maybe because the Arduino code never gets up to sending the message to be read? Or something else?
         # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
         # print (arduino_code_latency)    
 
     def on_init(self, controller):
         print "Initialized"
+        self.start_leap = time.time()
+        self.end_leap = time.time()
+        self.latency_leap = 0.0
+
+        self.start_arduino = time.time()
+        self.end_arduino = time.time()
+        self.latency_arduino = 0.0
+
+        self.iterator = 0
+        self.rows = []
+        self.number = 0
 
     def on_connect(self, controller):
         print "Connected"
