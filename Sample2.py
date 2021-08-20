@@ -8,7 +8,7 @@
 
 import Leap
 import sys
-import thread
+import threading
 import time
 import serial
 import numpy
@@ -20,7 +20,7 @@ import csv
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
-arduino = serial.Serial('COM3', 9600)
+arduino = serial.Serial('COM3', 9600, timeout=0.1)
 servo_angles = []
 
 def unit_vector(vector):
@@ -105,67 +105,6 @@ class SampleListener(Leap.Listener):
     #     # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
     #     # print (arduino_code_latency)    
 
-    def measure_latency(self, controller):
-            # Calculating average latency from the leap motion controller and python code.
-            self.end_leap = time.time()
-            self.end_arduino = time.time()
-
-            self.latency_leap = ((self.end_leap - self.start_leap)*1000)/self.iterator
-            self.latency_arduino = (self.end_arduino - self.start_arduino)*1000
-            latency_difference = self.latency_arduino - self.latency_leap
-            latency_total = self.latency_arduino + self.latency_leap
-            # print("Latency (ms): " + str(self.latency_leap))
-            self.start_leap = time.time()
-            self.start_arduino = time.time()
-            self.number+=1
-            
-            print("Latency Leap - Averaged (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency difference (ms): " + str(latency_difference) + " Latency total (ms): " + str(latency_total))
-
-            # self.iterator = self.iterator + 1
-
-            # True if a 1 byte or more has been sent from the Arduino and is waiting in the buffer
-            # Activates everytime after the Arduino receives data from the Leap Motion the Arduino send servo motor commands and send a "\n" back to Python
-            # This indicates latency for Arduino to recieve and move to each servo motor position from the Python code.
-            # if arduino.in_waiting>=1
-            #     self.end_leap = time.time()
-            #     self.end_arduino = time.time()
-
-            #     self.latency_leap = ((self.end_leap - self.start_leap)*1000)/self.iterator
-            #     self.latency_arduino = (self.end_arduino - self.start_arduino)*1000
-            #     latency_difference = self.latency_arduino - self.latency_leap
-            #     latency_total = self.latency_arduino + self.latency_leap
-            #     # print("Latency (ms): " + str(self.latency_leap))
-            #     self.start_leap = time.time()
-            #     self.start_arduino = time.time()
-
-            self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_difference),str(latency_total)])
-                                                
-            # Reset values used to calculate latency_leap average
-            self.iterator = 0
-            
-            if keyboard.is_pressed("s"):
-                    
-                fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Difference", "Latency Total"]
-
-                # name of csv file 
-                filename = "Latency Data.csv"
-        
-                # writing to csv file 
-                with open(filename, 'wb') as csvfile: 
-                    # creating a csv writer object 
-                    csvwriter = csv.writer(csvfile) 
-                        
-                    # writing the fields 
-                    csvwriter.writerow(fields) 
-                        
-                    # writing the data rows 
-                    csvwriter.writerows(self.rows)
-                
-                print "LATENCY DATA SAVED TO CSV FILE" 
-            # Code is hanging on this read line. Maybe because the Arduino code never gets up to sending the message to be read? Or something else?
-            # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
-            # print (arduino_code_latency)    
-
     def on_init(self, controller):
         print "Initialized"
         self.start_leap = time.time()
@@ -176,10 +115,15 @@ class SampleListener(Leap.Listener):
         self.end_arduino = time.time()
         self.latency_arduino = 0.0
 
-        self.iterator = 0
+        self.latency_total_start = time.time()
+        self.latency_total_end = time.time()
+        self.latency_total = 0.0
+
+        self.iterator = 0.1
         self.rows = []
         self.number = 0
         self.lock = False
+        self.lock2 = False
 
     def on_connect(self, controller):
         print "Connected"
@@ -197,7 +141,65 @@ class SampleListener(Leap.Listener):
     def on_exit(self, controller):
         print "Exited"
 
+    def run(self):
+        # threading.Thread(target = main, args=(self,)).start()
+        threading.Thread(target = self.measure_latency).start()
+    
+    def measure_latency(self):
+            while True:
+                # print "test"
+                if arduino.in_waiting>=1:
+                    self.latency_arduino = int(arduino.read(size=2))
+                    arduino.reset_input_buffer()
+                    # print arduino.out_waiting
+
+                    # try:
+                    # ser_bytes = arduino.readline()
+                    # # decoded_bytes = ord(ser_bytes[0]) + ord(ser_bytes[1]) + ord(ser_bytes[2]) + ord(ser_bytes[3]) 
+                    # decoded_bytes = ser_bytes[0:len(ser_bytes)-2].decode("utf-8")
+                    # except:
+                    #     print("Keyboard Interrupt")
+                    #     break
+                    
+                    self.number+=1
+
+                    self.latency_total_end = time.time()
+                    self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
+                    self.latency_total_start = time.time()
+
+                    latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
+                    # print arduino.in_waiting
+                    # print("Latency Leap - Averaged (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency difference (ms): " + str(latency_difference) + " Latency total (ms): " + str(latency_total))
+                    print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+
+                    self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
+                
+                    if keyboard.is_pressed("s"):
+                            
+                        fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
+
+                        # name of csv file 
+                        filename = "Latency Data.csv"
+                
+                        # writing to csv file 
+                        with open(filename, 'wb') as csvfile: 
+                            # creating a csv writer object 
+                            csvwriter = csv.writer(csvfile) 
+                                
+                            # writing the fields 
+                            csvwriter.writerow(fields) 
+                                
+                            # writing the data rows 
+                            csvwriter.writerows(self.rows)
+                        
+                        print "LATENCY DATA SAVED TO CSV FILE" 
+                    # Code is hanging on this read line. Maybe because the Arduino code never gets up to sending the message to be read? Or something else?
+                    # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
+                    # print (arduino_code_latency)    
+
+
     def on_frame(self, controller):
+        
         # Get the most recent frame and report some basic information
         frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
 
@@ -250,28 +252,31 @@ class SampleListener(Leap.Listener):
 
             # Adds a line space inbetween terminal messages
             # print("\n")
+            if self.lock == False:
+                self.run()
+                self.lock = True
 
-            if arduino.in_waiting>=1 or self.lock == False:
-                print (arduino.in_waiting)
-                arduino.reset_input_buffer()
-                if self.lock == False:
-                    self.lock = True
-                
-                arduino.reset_output_buffer()
-                
-                # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
-                arduino.write('\n'*3)
+            self.end_leap = time.time()
+            self.latency_leap = (self.end_leap - self.start_leap)*1000
+            self.start_leap = time.time()
 
-                # # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-                arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
-                
-                # arduino.write(struct.pack('>6b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2)
-                # arduino.write(struct.pack('>1d', data_confidence))
+            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            arduino.write('\n')
+                      
+            # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+            arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
+            
+            # print arduino.in_waiting
+   
 
-                # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
-                # print ("Finger Servo Angles - " + "Thumb: " + str(servo_angles[0]) + ", " + "Pointer: " + str(servo_angles[1]) + ", " + "Middle: " + str(servo_angles[2]) + ", " + "Ring: " + str(servo_angles[3]) + ", " + "Pinky: " + str(servo_angles[4]) + ", " + "Wrist: " + str(roll) + " - data confidence: " + str(data_confidence))
-                # time.sleep(0.1)
-                self.measure_latency(controller)
+            # if arduino.in_waiting>=1:
+            #     arduino.reset_input_buffer()
+
+            #     ## Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            #     arduino.write('\n'*3)
+                      
+            #     # # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+            #     arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
 
 def main():
     
@@ -301,13 +306,13 @@ def main():
         else:
 
             print "Invalid mode selected. Please type '1', '2', '3', '4' or '5'"
-            
+
     if mode == "1" or mode == "2" or mode == "4" or mode == "5":
 
         # Create a sample listener and controller
         listener = SampleListener()
         controller = Leap.Controller()
-
+        
         # Have the sample listener receive events from the controller
         controller.add_listener(listener)
 

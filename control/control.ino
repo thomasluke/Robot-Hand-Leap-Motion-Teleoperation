@@ -12,7 +12,8 @@ bool lock = false;
 double leap_data_confidence;
 double glove_data_weight;
 
-unsigned long StartTime = millis();
+unsigned long LocalStartTime = millis();
+unsigned long SystemStartTime = millis();
 unsigned long CurrentTime;
 unsigned long ElapsedTime;
 
@@ -79,6 +80,8 @@ void setup()
 
 void loop()
 {
+      LocalStartTime = millis();
+
   if (mode_switcher < 500)
   {
     mode_switcher++;
@@ -159,15 +162,17 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
 
-    // CurrentTime = millis();
-    // ElapsedTime = CurrentTime - StartTime;
-    // Serial.println(ElapsedTime);
-    Serial.write(1);
-    // StartTime = millis();
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - LocalStartTime;
+    Serial.print(ElapsedTime);
+//    Serial.write(ElapsedTime/1000);
 
-//    lcd.print("        ");
-//    lcd.setCursor(7, 1);
+    lcd.print("        ");
+    lcd.setCursor(7, 1);
 //    lcd.print("leap");
+    lcd.print(String(ElapsedTime));
+    SystemStartTime = millis();
+
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
 
