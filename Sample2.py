@@ -151,15 +151,6 @@ class SampleListener(Leap.Listener):
                 if arduino.in_waiting>=1:
                     self.latency_arduino = int(arduino.read(size=2))
                     arduino.reset_input_buffer()
-                    # print arduino.out_waiting
-
-                    # try:
-                    # ser_bytes = arduino.readline()
-                    # # decoded_bytes = ord(ser_bytes[0]) + ord(ser_bytes[1]) + ord(ser_bytes[2]) + ord(ser_bytes[3]) 
-                    # decoded_bytes = ser_bytes[0:len(ser_bytes)-2].decode("utf-8")
-                    # except:
-                    #     print("Keyboard Interrupt")
-                    #     break
                     
                     self.number+=1
 
@@ -168,8 +159,6 @@ class SampleListener(Leap.Listener):
                     self.latency_total_start = time.time()
 
                     latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
-                    # print arduino.in_waiting
-                    # print("Latency Leap - Averaged (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency difference (ms): " + str(latency_difference) + " Latency total (ms): " + str(latency_total))
                     print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
 
                     self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
@@ -193,16 +182,16 @@ class SampleListener(Leap.Listener):
                             csvwriter.writerows(self.rows)
                         
                         print "LATENCY DATA SAVED TO CSV FILE" 
-                    # Code is hanging on this read line. Maybe because the Arduino code never gets up to sending the message to be read? Or something else?
-                    # arduino_code_latency = str(arduino.readline()) # This latency is the time between sending commands to arduino and receiving serial messages
-                    # print (arduino_code_latency)    
-
 
     def on_frame(self, controller):
         
         # Get the most recent frame and report some basic information
         frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
 
+        if self.lock == False:
+                self.run()
+                self.lock = True
+                
         self.iterator = self.iterator + 1
 
         # Get hands data from each frame
@@ -252,19 +241,22 @@ class SampleListener(Leap.Listener):
 
             # Adds a line space inbetween terminal messages
             # print("\n")
-            if self.lock == False:
-                self.run()
-                self.lock = True
 
             self.end_leap = time.time()
             self.latency_leap = (self.end_leap - self.start_leap)*1000
             self.start_leap = time.time()
 
-            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
-            arduino.write('\n')
-                      
-            # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
+            if self.iterator >= 2: 
+                # print arduino.out_waiting
+                arduino.reset_output_buffer()
+
+                # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+                arduino.write('\n')
+                     
+                # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+                arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
+                
+                self.iterator = 0
             
             # print arduino.in_waiting
    

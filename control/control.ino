@@ -170,7 +170,7 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
     lcd.print("        ");
     lcd.setCursor(7, 1);
 //    lcd.print("leap");
-    lcd.print(String(ElapsedTime));
+    lcd.print(Serial.available());
     SystemStartTime = millis();
 
 
@@ -196,7 +196,7 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
     // lcd.setCursor(12, 1);
     // lcd.print(Serial.available()); // Number of bytes in the serial buffer (64 max - 0 -> 63)
 
-//    Serial.flush();
+//   Serial.flush();
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
