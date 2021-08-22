@@ -80,7 +80,7 @@ void setup()
 
 void loop()
 {
-      LocalStartTime = millis();
+  LocalStartTime = millis();
 
   if (mode_switcher < 500)
   {
@@ -94,8 +94,8 @@ void loop()
   // delay(100);
   // Serial.setTimeout(50);
 
-//  if (Serial.available() > 0 && Serial.read() == '\n' && lock == false) // Only run when serial data is received
-if (Serial.read() == '\n' && lock == false) // Only run when serial data is received
+  //  if (Serial.available() > 0 && Serial.read() == '\n' && lock == false) // Only run when serial data is received
+  if (Serial.read() == '\n' && lock == false) // Only run when serial data is received
   {
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
     data2 = Serial.readBytesUntil('\n', mode_buffer, sizeof(mode_buffer) - 1);
@@ -132,13 +132,12 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
       lcd.print("Error");
       break;
     }
-        Serial.flush();
-
+    Serial.flush();
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-//  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  //  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   if ((mode == 1 || mode == 2) && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   {
     mode_switcher = 0;
@@ -165,14 +164,15 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
     CurrentTime = millis();
     ElapsedTime = CurrentTime - LocalStartTime;
     Serial.print(ElapsedTime);
-//    Serial.write(ElapsedTime/1000);
+    //    Serial.write(ElapsedTime/1000);
 
     lcd.print("        ");
     lcd.setCursor(7, 1);
-//    lcd.print("leap");
+    //    lcd.print("leap");
     lcd.print(Serial.available());
-    SystemStartTime = millis();
+    // lcd.print(string(ElapsedTime));
 
+    SystemStartTime = millis();
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
 
@@ -196,7 +196,7 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
     // lcd.setCursor(12, 1);
     // lcd.print(Serial.available()); // Number of bytes in the serial buffer (64 max - 0 -> 63)
 
-//   Serial.flush();
+    //   Serial.flush();
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
@@ -276,7 +276,7 @@ if (Serial.read() == '\n' && lock == false) // Only run when serial data is rece
 
     servo_thumb.write(flex_1_val);   //A1
     servo_pointer.write(flex_2_val); //A2
-    servo_middle.write(flex_3_val);   //A3
+    servo_middle.write(flex_3_val);  //A3
     servo_ring.write(flex_4_val);    //A4
     servo_pinky.write(flex_5_val);   //A5
 
