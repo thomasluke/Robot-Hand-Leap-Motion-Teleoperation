@@ -21,7 +21,7 @@ from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
 
 arduino = serial.Serial('COM3', 9600, timeout=0.1)
-servo_angles = []
+# self.servo_angles = []
 
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
@@ -125,6 +125,10 @@ class SampleListener(Leap.Listener):
         self.lock = False
         self.lock2 = False
 
+        self.servo_angles = [0,0,0,0,0]
+        self.data_confidence = 0
+        self.roll = 0
+
     def on_connect(self, controller):
         print "Connected"
 
@@ -146,12 +150,29 @@ class SampleListener(Leap.Listener):
         threading.Thread(target = self.measure_latency).start()
     
     def measure_latency(self):
+
             while True:
-                # print "test"
+
+                # Experimenting with serial message delays being independant on a seperate thread from the leap motion loop latency/fram rate
+                # BE CAREFUL AS THIS MAY CHAGE THE LATENCY CALCULATIONS???                 
+                # if self.lock == True and len(self.servo_angles)>=5:
+                #     # print self.servo_angles
+                #     # print self.roll
+                #     # print self.data_confidence
+                #     # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+                #     # print arduino.out_waiting
+                #     arduino.reset_output_buffer()
+                #     arduino.write('\n')
+                        
+                #     # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+                #     arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, self.data_confidence*100))
+                    
+                #     time.sleep(0.02)
+
                 if arduino.in_waiting>=1:
                     self.latency_arduino = int(arduino.read(size=2))
                     arduino.reset_input_buffer()
-                    
+
                     self.number+=1
 
                     self.latency_total_end = time.time()
@@ -189,9 +210,10 @@ class SampleListener(Leap.Listener):
         frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
 
         if self.lock == False:
-                self.run()
-                self.lock = True
                 
+            self.run()
+            self.lock = True
+
         self.iterator = self.iterator + 1
 
         # Get hands data from each frame
@@ -203,15 +225,15 @@ class SampleListener(Leap.Listener):
             # Get the hand's normal vector and direction
             normal = hand.palm_normal  # Normal vectors points outwards from palm
             direction = hand.direction  # Direction vector points from palm towards fingertips
-            data_confidence = hand.confidence           
+            self.data_confidence = hand.confidence           
             arm = hand.arm
-            roll = int((normal.roll * Leap.RAD_TO_DEG)+90)
+            self.roll = int((normal.roll * Leap.RAD_TO_DEG)+90)
 
             resultant_vector_mag = [None] * 5
             
             # Reset variables
             finger_flexion = []
-            servo_angles = []
+            self.servo_angles = [0,0,0,0,0]
             index = 0
             
             # Get fingers
@@ -227,14 +249,14 @@ class SampleListener(Leap.Listener):
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_normal_vector)) 
                     # Conversion factor finger flexion values to servo motor rotation angle.  
-                    servo_angles.append(int(abs((180*3)-(finger_flexion[index]*(180/0.6)))))          
+                    self.servo_angles[index] = (int(abs((180*3)-(finger_flexion[index]*(180/0.6)))))          
                 
                 # If the tracked finger is not a thumb then measure its flexion angle with respect to the hand/palm vector
                 else:
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_vector))
                     # Conversion factor finger flexion values to servo motor rotation angle.  
-                    servo_angles.append(int(finger_flexion[index]*(180/2.5)))
+                    self.servo_angles[index] = (int(finger_flexion[index]*(180/2.5)))
                 
                 # Iterate index value used for array indexing
                 index = index + 1
@@ -245,7 +267,7 @@ class SampleListener(Leap.Listener):
             self.end_leap = time.time()
             self.latency_leap = (self.end_leap - self.start_leap)*1000
             self.start_leap = time.time()
-
+          
             if self.iterator >= 2: 
                 # print arduino.out_waiting
                 arduino.reset_output_buffer()
@@ -254,7 +276,7 @@ class SampleListener(Leap.Listener):
                 arduino.write('\n')
                      
                 # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-                arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
+                arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, self.data_confidence*100))
                 
                 self.iterator = 0
             
@@ -268,7 +290,7 @@ class SampleListener(Leap.Listener):
             #     arduino.write('\n'*3)
                       
             #     # # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            #     arduino.write(struct.pack('>7b', servo_angles[0]/3, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2, roll/2, data_confidence*100))
+            #     arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, roll/2, self.data_confidence*100))
 
 def main():
     
@@ -322,26 +344,26 @@ def main():
 
         while True:
 
-            servo_angles = []
+            self.servo_angles = []
 
             finger_keys = ["shift", "q", "w", "e", "r"]
 
             for key in finger_keys:
 
                 if keyboard.is_pressed(key):
-                    servo_angles.append(180)
+                    self.servo_angles.append(180)
                 else:
-                    servo_angles.append(0)
-                    # servo_angles[idx] = 180       
+                    self.servo_angles.append(0)
+                    # self.servo_angles[idx] = 180       
 
             # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
             arduino.write('\n')
                 
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>5b', servo_angles[0]/2, servo_angles[1]/2., servo_angles[2]/2, servo_angles[3]/2, servo_angles[4]/2))
+            arduino.write(struct.pack('>5b', self.servo_angles[0]/2, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2))
 
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
-            print ("Thumb servo angle: " + str(servo_angles[0]) + ", " + "Pointer servo angle: " + str(servo_angles[1]) + ", " + "Middle servo angle: " + str(servo_angles[2]) + ", " + "Ring servo angle: " + str(servo_angles[3]) + ", " + "Pinky servo angle: " + str(servo_angles[4]))
+            print ("Thumb servo angle: " + str(self.servo_angles[0]) + ", " + "Pointer servo angle: " + str(self.servo_angles[1]) + ", " + "Middle servo angle: " + str(self.servo_angles[2]) + ", " + "Ring servo angle: " + str(self.servo_angles[3]) + ", " + "Pinky servo angle: " + str(self.servo_angles[4]))
             # time.sleep(0.1)
     
 if __name__ == "__main__":
