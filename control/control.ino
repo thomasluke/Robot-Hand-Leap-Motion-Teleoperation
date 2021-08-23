@@ -163,7 +163,7 @@ void loop()
     servo_wrist.write(servo_wrist_angle);
 
     CurrentTime = millis();
-    ElapsedTime = CurrentTime - SystemStartTime;
+    ElapsedTime = CurrentTime - LocalStartTime;
     Serial.print('\n');
     Serial.print(ElapsedTime);
     SystemStartTime = millis();
@@ -251,7 +251,7 @@ void loop()
     servo_wrist.write(weighted_servo_wrist_angle);
 
     CurrentTime = millis();
-    ElapsedTime = CurrentTime - SystemStartTime;
+    ElapsedTime = CurrentTime - LocalStartTime;
     Serial.print('\n');
     Serial.print(ElapsedTime);
     SystemStartTime = millis();
@@ -293,7 +293,7 @@ void loop()
     servo_pinky.write(flex_5_val);   //A5
 
     CurrentTime = millis();
-    ElapsedTime = CurrentTime - SystemStartTime;
+    ElapsedTime = CurrentTime - LocalStartTime;
     Serial.print('\n');
     Serial.print(ElapsedTime);
     SystemStartTime = millis();
@@ -328,7 +328,7 @@ void loop()
     servo_wrist.write(servo_wrist_angle);
 
     CurrentTime = millis();
-    ElapsedTime = CurrentTime - SystemStartTime;
+    ElapsedTime = CurrentTime - LocalStartTime;
     Serial.print('\n');
     Serial.print(ElapsedTime);
     SystemStartTime = millis();
