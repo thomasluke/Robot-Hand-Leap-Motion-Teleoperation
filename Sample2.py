@@ -170,8 +170,9 @@ class SampleListener(Leap.Listener):
                 #     time.sleep(0.02)
 
                 if arduino.in_waiting>=1:
-                    self.latency_arduino = int(arduino.read(size=2))
-                    arduino.reset_input_buffer()
+                    if arduino.read() == "\n":
+                        self.latency_arduino = int(arduino.read_until(expected = "\n"))
+                        arduino.reset_input_buffer()
 
                     self.number+=1
 
@@ -268,29 +269,73 @@ class SampleListener(Leap.Listener):
             self.latency_leap = (self.end_leap - self.start_leap)*1000
             self.start_leap = time.time()
           
-            if self.iterator >= 2: 
-                # print arduino.out_waiting
-                arduino.reset_output_buffer()
+            # if self.iterator >= 2: 
+            # print arduino.out_waiting
+            arduino.reset_output_buffer()
 
-                # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
-                arduino.write('\n')
-                     
-                # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-                arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, self.data_confidence*100))
-                
-                self.iterator = 0
+            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            arduino.write('\n')
+                    
+            # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
+            arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, self.data_confidence*100))
             
-            # print arduino.in_waiting
-   
+            self.iterator = 0
 
-            # if arduino.in_waiting>=1:
-            #     arduino.reset_input_buffer()
+            # print self.servo_angles
 
-            #     ## Serial write newline character which to inidcate where to start reading bytes in the Arduino code
-            #     arduino.write('\n'*3)
-                      
-            #     # # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            #     arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, roll/2, self.data_confidence*100))
+def measure_latency(control_mode, lock = False):
+
+    if lock == False:
+        
+        number = 0
+        rows = []
+        arduino_latency = 0
+
+        total_latency_start = time.time()
+        local_latency_start = time.time()
+
+        lock = True
+
+    # while True:
+    local_latency_end = time.time()
+    local_latency = (local_latency_end - local_latency_start) * 1000
+    local_latency_start = time.time()
+
+    if arduino.in_waiting>=1:
+        if arduino.read() == "\n":
+            arduino_latency = int(arduino.read_until(expected = "\n"))
+            arduino.reset_input_buffer()
+    
+        number+=1
+
+        total_latency_end = time.time()
+        total_latency = (total_latency_end - total_latency_start) * 1000
+        total_latency_start = time.time()
+
+        serial_latency = total_latency - arduino_latency - local_latency
+        print(" Latency Arduino (ms): " + str(arduino_latency) +  " Latency Local (ms): " + str(local_latency) + " Latency Total (ms): " + str(total_latency) + " Latency Serial (ms): " + str(serial_latency))
+
+        rows.append([str(number),str(arduino_latency),str(local_latency),str(total_latency),str(serial_latency)])
+
+    if keyboard.is_pressed("s"):
+            
+        fields = ["Number", "Latency Arduino", "Latency Local"]
+
+        # name of csv file 
+        filename = control_mode + " Latency Data.csv"
+
+        # writing to csv file 
+        with open(filename, 'wb') as csvfile: 
+            # creating a csv writer object 
+            csvwriter = csv.writer(csvfile) 
+                
+            # writing the fields 
+            csvwriter.writerow(fields) 
+                
+            # writing the data rows 
+            csvwriter.writerows(rows)
+        
+        print "LATENCY DATA SAVED TO CSV FILE" 
 
 def main():
     
@@ -339,6 +384,10 @@ def main():
         finally:
             # Remove the sample listener when done
             controller.remove_listener(listener)
+    elif mode == "3":
+        
+        while True:
+            measure_latency("Glove")
             
     elif mode == "4":
 
@@ -365,6 +414,8 @@ def main():
             # Print terminal message showing servo motor rotation values being sent to Arduino via serial communication
             print ("Thumb servo angle: " + str(self.servo_angles[0]) + ", " + "Pointer servo angle: " + str(self.servo_angles[1]) + ", " + "Middle servo angle: " + str(self.servo_angles[2]) + ", " + "Ring servo angle: " + str(self.servo_angles[3]) + ", " + "Pinky servo angle: " + str(self.servo_angles[4]))
             # time.sleep(0.1)
+            
+            measure_latency("Keyboard")
     
 if __name__ == "__main__":
     main()

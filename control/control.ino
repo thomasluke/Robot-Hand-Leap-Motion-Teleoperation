@@ -2,7 +2,7 @@
 #include <LiquidCrystal_I2C.h>
 //#include <ArduinoJson.h>
 
-int mode_switcher = 0;
+// int mode_switcher = 0;
 int data;
 int data2;
 int mode;
@@ -82,14 +82,14 @@ void loop()
 {
   LocalStartTime = millis();
 
-  if (mode_switcher < 500)
-  {
-    mode_switcher++;
-    lcd.setCursor(0, 1);
-    lcd.print("      ");
-    lcd.setCursor(0, 1);
-    lcd.print(mode_switcher);
-  }
+  // if (mode_switcher < 500)
+  // {
+  //   mode_switcher++;
+  //   lcd.setCursor(0, 1);
+  //   lcd.print("      ");
+  //   lcd.setCursor(0, 1);
+  //   lcd.print(mode_switcher);
+  // }
   // put your main code here, to run repeatedly:
   // delay(100);
   // Serial.setTimeout(50);
@@ -138,10 +138,11 @@ void loop()
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
   //  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  if ((mode == 1 || mode == 2) && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  // if ((mode == 1 || mode == 2) && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  if (mode == 2 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   {
-    mode_switcher = 0;
-    memset(buffer, 0, sizeof(buffer));
+    // mode_switcher = 0;
+    // memset(buffer, 0, sizeof(buffer));
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
@@ -162,8 +163,12 @@ void loop()
     servo_wrist.write(servo_wrist_angle);
 
     CurrentTime = millis();
-    ElapsedTime = CurrentTime - LocalStartTime;
+    ElapsedTime = CurrentTime - SystemStartTime;
+    Serial.print('\n');
     Serial.print(ElapsedTime);
+    SystemStartTime = millis();
+    
+//    Serial.print('\n');
     //    Serial.write(ElapsedTime/1000);
 
     lcd.print("        ");
@@ -172,7 +177,6 @@ void loop()
     lcd.print(Serial.available());
     // lcd.print(string(ElapsedTime));
 
-    SystemStartTime = millis();
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
 
@@ -201,9 +205,10 @@ void loop()
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  else if (mode == 5 && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  // else if (mode == 5 && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  else if (mode == 5 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   {
-    mode_switcher = 0;
+    // mode_switcher = 0;
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
@@ -245,6 +250,12 @@ void loop()
     servo_pinky.write(weighted_servo_pinky_angle);
     servo_wrist.write(weighted_servo_wrist_angle);
 
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - SystemStartTime;
+    Serial.print('\n');
+    Serial.print(ElapsedTime);
+    SystemStartTime = millis();
+
     lcd.print("        ");
     lcd.setCursor(7, 1);
     lcd.print("combined");
@@ -252,7 +263,8 @@ void loop()
 
   // True if in mode 1 (Automatic control selection) or mode 3 (Glove control)
   // True if serial data is not availble
-  else if ((mode == 1 || mode == 3) && mode_switcher >= 500)
+  // else if ((mode == 1 || mode == 3) && mode_switcher >= 500)
+  else if (mode == 3)
   {
     // Put glove control code here
     // Can use LCD message to debug whether these mode if statements are working
@@ -280,11 +292,18 @@ void loop()
     servo_ring.write(flex_4_val);    //A4
     servo_pinky.write(flex_5_val);   //A5
 
-    //    mode_switcher++;
-    lcd.setCursor(0, 1);
-    lcd.print("                ");
-    lcd.setCursor(0, 1);
-    lcd.print("glovemode");
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - SystemStartTime;
+    Serial.print('\n');
+    Serial.print(ElapsedTime);
+    SystemStartTime = millis();
+//    delay(100);
+
+//    //    mode_switcher++;
+//    lcd.setCursor(0, 1);
+//    lcd.print("                ");
+//    lcd.setCursor(0, 1);
+//    lcd.print("glovemode");
   }
 
   else if (mode == 4)
@@ -307,5 +326,12 @@ void loop()
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
+
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - SystemStartTime;
+    Serial.print('\n');
+    Serial.print(ElapsedTime);
+    SystemStartTime = millis();
+    
   }
 }
