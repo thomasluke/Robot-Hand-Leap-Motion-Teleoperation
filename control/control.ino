@@ -271,26 +271,26 @@ void loop()
     // Main check will be to see whether this "else if" is triggered at the correct times in mode 1 (Automatic control).
     // Also need to make sure this mode doesnt trigger inbetween serial signals! (maybe/probably remove if too buggy?!?!)
 
-    flex_5_val = analogRead(flex_5);
-    flex_5_val = map(flex_5_val, 630, 730, 80, 20);
+    // flex_5_val = analogRead(flex_5);
+    // flex_5_val = map(flex_5_val, 630, 730, 80, 20);
 
-    flex_4_val = analogRead(flex_4);
-    flex_4_val = map(flex_4_val, 520, 710, 70, 175);
+    // flex_4_val = analogRead(flex_4);
+    // flex_4_val = map(flex_4_val, 520, 710, 70, 175);
 
-    flex_3_val = analogRead(flex_3);
-    flex_3_val = map(flex_3_val, 510, 680, 140, 10);
+    // flex_3_val = analogRead(flex_3);
+    // flex_3_val = map(flex_3_val, 510, 680, 140, 10);
 
     flex_2_val = analogRead(flex_2);
-    flex_2_val = map(flex_2_val, 580, 715, 90, 175);
+    flex_2_val = map(flex_2_val, 200, 450, 0, 180);
 
-    flex_1_val = analogRead(flex_1);
-    flex_1_val = map(flex_1_val, 550, 700, 90, 175);
+    // flex_1_val = analogRead(flex_1);
+    // flex_1_val = map(flex_1_val, 550, 700, 90, 175);
 
-    servo_thumb.write(flex_1_val);   //A1
+    // servo_thumb.write(flex_1_val);   //A1
     servo_pointer.write(flex_2_val); //A2
-    servo_middle.write(flex_3_val);  //A3
-    servo_ring.write(flex_4_val);    //A4
-    servo_pinky.write(flex_5_val);   //A5
+    // servo_middle.write(flex_3_val);  //A3
+    // servo_ring.write(flex_4_val);    //A4
+    // servo_pinky.write(flex_5_val);   //A5
 
     CurrentTime = millis();
     ElapsedTime = CurrentTime - LocalStartTime;
@@ -300,10 +300,14 @@ void loop()
 //    delay(100);
 
 //    //    mode_switcher++;
-//    lcd.setCursor(0, 1);
-//    lcd.print("                ");
-//    lcd.setCursor(0, 1);
-//    lcd.print("glovemode");
+  lcd.clear();
+
+   lcd.setCursor(0, 1);
+//   lcd.print("                ");
+//   lcd.setCursor(0, 1);
+  //  lcd.print("glovemode");
+   lcd.print(flex_2_val);
+
   }
 
   else if (mode == 4)
