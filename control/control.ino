@@ -281,7 +281,7 @@ void loop()
     flex_3_val = map(flex_3_val, 200, 450, 0, 180);
 
     flex_2_val = analogRead(flex_2);
-    flex_2_val = map(flex_2_val, 200, 450, 0, 180);
+    flex_2_val = map(flex_2_val, 180, 350, 0, 180);
 
     flex_1_val = analogRead(flex_1);
     flex_1_val = map(flex_1_val, 200, 450, 0, 180);
