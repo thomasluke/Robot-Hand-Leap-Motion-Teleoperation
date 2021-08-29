@@ -270,7 +270,7 @@ void loop()
     // Can use LCD message to debug whether these mode if statements are working
     // Main check will be to see whether this "else if" is triggered at the correct times in mode 1 (Automatic control).
     // Also need to make sure this mode doesnt trigger inbetween serial signals! (maybe/probably remove if too buggy?!?!)
-
+    
     flex_5_val = analogRead(flex_5);
     flex_5_val = map(flex_5_val, 200, 450, 0, 180);
 
@@ -306,7 +306,7 @@ void loop()
 //   lcd.print("                ");
 //   lcd.setCursor(0, 1);
   //  lcd.print("glovemode");
-   lcd.print(flex_2_val);
+   lcd.print(flex_3_val);
 
   }
 
