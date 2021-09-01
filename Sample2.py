@@ -234,7 +234,7 @@ class SampleListener(Leap.Listener):
             
             # Reset variables
             finger_flexion = []
-            self.servo_angles = [0,0,0,0,0]
+            # self.servo_angles = [0,0,0,0,0]
             index = 0
             
             # Get fingers
@@ -250,14 +250,21 @@ class SampleListener(Leap.Listener):
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_normal_vector)) 
                     # Conversion factor finger flexion values to servo motor rotation angle.  
-                    self.servo_angles[index] = (int(abs((180*3)-(finger_flexion[index]*(180/0.6)))))          
+                    self.servo_angles[index] = (int(abs((180*3)-(finger_flexion[index]*(180/0.6))))) 
                 
                 # If the tracked finger is not a thumb then measure its flexion angle with respect to the hand/palm vector
                 else:
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_vector))
-                    # Conversion factor finger flexion values to servo motor rotation angle.  
+                    # Conversion factor finger flexion values to servo motor rotation angle. 
+                    
                     self.servo_angles[index] = (int(finger_flexion[index]*(180/2.5)))
+
+                    # flex_angle = (int(finger_flexion[index]*(180/2.5)))
+                    # print self.servo_angles[index]
+
+                    # if abs(flex_angle - self.servo_angles[index]) <= 90: 
+                    #     self.servo_angles[index] = flex_angle
                 
                 # Iterate index value used for array indexing
                 index = index + 1
@@ -277,12 +284,12 @@ class SampleListener(Leap.Listener):
             arduino.write('\n')
                     
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2, self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, int(self.data_confidence*100)))
+            arduino.write(struct.pack('>7b', self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
             
             self.iterator = 0
 
-            # print self.servo_angles
-            print int(self.data_confidence*100)
+            print self.servo_angles
+            # print int(self.data_confidence*100)
 
 
 def measure_latency(control_mode, lock = False):

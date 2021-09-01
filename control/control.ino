@@ -151,12 +151,12 @@ void loop()
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle = buffer[0] * 3;
-    servo_pointer_angle = buffer[1] * 2;
-    servo_middle_angle = buffer[2] * 2;
-    servo_ring_angle = buffer[3] * 2;
-    servo_pinky_angle = buffer[4] * 2;
-    servo_wrist_angle = buffer[5] * 2;
+    servo_thumb_angle = buffer[0] * 4 ;
+    servo_pointer_angle = buffer[1] * 4 ;
+    servo_middle_angle = buffer[2] * 4 ;
+    servo_ring_angle = buffer[3] * 4 ;
+    servo_pinky_angle = buffer[4] * 4 ;
+    servo_wrist_angle = buffer[5] * 4 ;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
@@ -234,12 +234,12 @@ void loop()
       data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
       // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-      servo_thumb_angle = buffer[0] * 3;
-      servo_pointer_angle = buffer[1] * 2;
-      servo_middle_angle = buffer[2] * 2;
-      servo_ring_angle = buffer[3] * 2;
-      servo_pinky_angle = buffer[4] * 2;
-      servo_wrist_angle = buffer[5] * 2;
+      servo_thumb_angle = buffer[0] * 4 ;
+      servo_pointer_angle = buffer[1] * 4 ;
+      servo_middle_angle = buffer[2] * 4 ;
+      servo_ring_angle = buffer[3] * 4 ;
+      servo_pinky_angle = buffer[4] * 4 ;
+      servo_wrist_angle = buffer[5] * 4 ;
 
       leap_data_confidence = (double(buffer[6]) / 100);
 
@@ -284,6 +284,8 @@ void loop()
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
 
+          // Serial.flush();
+
     CurrentTime = millis();
     ElapsedTime = CurrentTime - LocalStartTime;
     Serial.print('\n');
@@ -316,12 +318,12 @@ void loop()
       data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
       // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-      servo_thumb_angle = buffer[0] * 3;
-      servo_pointer_angle = buffer[1] * 2;
-      servo_middle_angle = buffer[2] * 2;
-      servo_ring_angle = buffer[3] * 2;
-      servo_pinky_angle = buffer[4] * 2;
-      servo_wrist_angle = buffer[5] * 2;
+      servo_thumb_angle = buffer[0] * 4 ;
+      servo_pointer_angle = buffer[1] * 4 ;
+      servo_middle_angle = buffer[2] * 4 ;
+      servo_ring_angle = buffer[3] * 4 ;
+      servo_pinky_angle = buffer[4] * 4 ;
+      servo_wrist_angle = buffer[5] * 4 ;
 
       leap_data_confidence = (double(buffer[6]) / 100);
 
@@ -449,12 +451,12 @@ void loop()
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle = buffer[0] * 2;
-    servo_pointer_angle = buffer[1] * 2;
-    servo_middle_angle = buffer[2] * 2;
-    servo_ring_angle = buffer[3] * 2;
-    servo_pinky_angle = buffer[4] * 2;
-    servo_wrist_angle = buffer[5] * 2;
+    servo_thumb_angle = buffer[0] * 4 ;
+    servo_pointer_angle = buffer[1] * 4 ;
+    servo_middle_angle = buffer[2] * 4 ;
+    servo_ring_angle = buffer[3] * 4 ;
+    servo_pinky_angle = buffer[4] * 4 ;
+    servo_wrist_angle = buffer[5] * 4 ;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
