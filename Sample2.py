@@ -277,11 +277,13 @@ class SampleListener(Leap.Listener):
             arduino.write('\n')
                     
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, self.data_confidence*100))
+            arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2, self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, int(self.data_confidence*100)))
             
             self.iterator = 0
 
-            print self.servo_angles
+            # print self.servo_angles
+            print int(self.data_confidence*100)
+
 
 def measure_latency(control_mode, lock = False):
 
@@ -344,13 +346,15 @@ def main():
     print "Mode 2: Leap Motion Control" # Leap Motion hand tracking control
     print "Mode 3: Glove Control" # Glove hand tracking control
     print "Mode 4: Keyboard Control" # Shift, q, w, e, r keyboard press control
-    print "Mode 5: Combined Control" # Combined leap motoon and glove hand tracking control for potentially imporved accuracy
+    print "Mode 5: Combined Control " # Combined leap motoon and glove hand tracking control for potentially imporved accuracy
+    print "Mode 6: Combined Control Interpolated Leap Data" # Combined leap motoon and glove hand tracking control for potentially imporved accuracy
+
 
     while 1:
 
         mode = raw_input()
 
-        if mode == "1" or mode == "2" or mode == "3" or mode == "4" or mode == "5": 
+        if mode == "1" or mode == "2" or mode == "3" or mode == "4" or mode == "5" or mode == "6": 
             
             print "Control mode " + mode + " selected"
             
@@ -366,7 +370,7 @@ def main():
 
             print "Invalid mode selected. Please type '1', '2', '3', '4' or '5'"
 
-    if mode == "1" or mode == "2" or mode == "4" or mode == "5":
+    if mode == "1" or mode == "2" or mode == "4" or mode == "5" or mode == "6":
 
         # Create a sample listener and controller
         listener = SampleListener()
