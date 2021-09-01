@@ -348,7 +348,7 @@ def measure_latency(control_mode, lock = False):
 
 def main():
     
-    print "Select Control Mode: Please type 1, 2, 3, 4 or 5"
+    print "Select Control Mode: Please type 1, 2, 3, 4, 5 or 6"
     print "Mode 1: Automatic Control Selection" # Switches automatically between Leap Motion and glove control based on whether the Leap Motion is receiving frame data
     print "Mode 2: Leap Motion Control" # Leap Motion hand tracking control
     print "Mode 3: Glove Control" # Glove hand tracking control
@@ -375,7 +375,7 @@ def main():
             
         else:
 
-            print "Invalid mode selected. Please type '1', '2', '3', '4' or '5'"
+            print "Invalid mode selected. Please type '1', '2', '3', '4', '5' or '6'"
 
     if mode == "1" or mode == "2" or mode == "4" or mode == "5" or mode == "6":
 
