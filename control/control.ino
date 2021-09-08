@@ -5,8 +5,10 @@
 // int mode_switcher = 0;
 int data;
 int data2;
+int data3;
 int mode;
-char buffer[8];
+char buffer[9];
+char buffer1[2];
 char mode_buffer[2];
 bool lock = false;
 double leap_data_confidence;
@@ -82,6 +84,14 @@ void loop()
 {
   LocalStartTime = millis();
 
+
+  if (lock == true)
+  {
+//    Serial.flush();
+
+    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+  }
+
   // if (mode_switcher < 500)
   // {
   //   mode_switcher++;
@@ -107,34 +117,34 @@ void loop()
 
     switch (mode)
     {
-    case 1:
-      lcd.setCursor(6, 0);
-      lcd.print("Auto");
-      break;
-    case 2:
-      lcd.setCursor(6, 0);
-      lcd.print("Leap");
-      break;
-    case 3:
-      lcd.setCursor(6, 0);
-      lcd.print("Glove");
-      break;
-    case 4:
-      lcd.setCursor(6, 0);
-      lcd.print("Key");
-      break;
-    case 5:
-      lcd.setCursor(6, 0);
-      lcd.print("Combined 1");
-      break;
-    case 6:
-      lcd.setCursor(6, 0);
-      lcd.print("Combined 2");
-      break;
-    default:
-      lcd.setCursor(6, 0);
-      lcd.print("Error");
-      break;
+      case 1:
+        lcd.setCursor(6, 0);
+        lcd.print("Auto");
+        break;
+      case 2:
+        lcd.setCursor(6, 0);
+        lcd.print("Leap");
+        break;
+      case 3:
+        lcd.setCursor(6, 0);
+        lcd.print("Glove");
+        break;
+      case 4:
+        lcd.setCursor(6, 0);
+        lcd.print("Key");
+        break;
+      case 5:
+        lcd.setCursor(6, 0);
+        lcd.print("Combined 1");
+        break;
+      case 6:
+        lcd.setCursor(6, 0);
+        lcd.print("Combined 2");
+        break;
+      default:
+        lcd.setCursor(6, 0);
+        lcd.print("Error");
+        break;
     }
     Serial.flush();
   }
@@ -143,20 +153,21 @@ void loop()
   // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
   //  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   // if ((mode == 1 || mode == 2) && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  if (mode == 2 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  //if (mode == 2 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
+  if (mode == 2 && int(buffer[0]) == 0 && lock == true) // Only run when serial data is received
   {
     // mode_switcher = 0;
     // memset(buffer, 0, sizeof(buffer));
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
-    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+    //    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle = buffer[0] * 4;
-    servo_pointer_angle = buffer[1] * 4;
-    servo_middle_angle = buffer[2] * 4;
-    servo_ring_angle = buffer[3] * 4;
-    servo_pinky_angle = buffer[4] * 4;
-    servo_wrist_angle = buffer[5] * 4;
+    servo_thumb_angle = buffer[1] * 4;
+    servo_pointer_angle = buffer[2] * 4;
+    servo_middle_angle = buffer[3] * 4;
+    servo_ring_angle = buffer[4] * 4;
+    servo_pinky_angle = buffer[5] * 4;
+    servo_wrist_angle = buffer[6] * 4;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
@@ -175,11 +186,11 @@ void loop()
     //    Serial.print('\n');
     //    Serial.write(ElapsedTime/1000);
 
-    //    lcd.print("        ");
-    //    lcd.setCursor(7, 1);
-    //    //    lcd.print("leap");
-    //    lcd.print(Serial.available());
-    //    // lcd.print(string(ElapsedTime));
+    lcd.print("        ");
+    lcd.setCursor(7, 1);
+    //    lcd.print("leap");
+    lcd.print(Serial.available());
+    // lcd.print(string(ElapsedTime));
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
 
@@ -203,7 +214,7 @@ void loop()
     // lcd.setCursor(12, 1);
     // lcd.print(Serial.available()); // Number of bytes in the serial buffer (64 max - 0 -> 63)
 
-    //   Serial.flush();
+    //    Serial.flush();
   }
 
   // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)

@@ -234,7 +234,7 @@ class SampleListener(Leap.Listener):
             
             # Reset variables
             finger_flexion = []
-            # self.servo_angles = [0,0,0,0,0]
+            self.servo_angles = []
             index = 0
             
             # Get fingers
@@ -250,7 +250,7 @@ class SampleListener(Leap.Listener):
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_normal_vector)) 
                     # Conversion factor finger flexion values to servo motor rotation angle.  
-                    self.servo_angles[index] = (int(abs((180*3)-(finger_flexion[index]*(180/0.6))))) 
+                    self.servo_angles.append(int(abs((180*3)-(finger_flexion[index]*(180/0.6))))) 
                 
                 # If the tracked finger is not a thumb then measure its flexion angle with respect to the hand/palm vector
                 else:
@@ -258,7 +258,7 @@ class SampleListener(Leap.Listener):
                     finger_flexion.append(angle_between(finger_vector, hand_vector))
                     # Conversion factor finger flexion values to servo motor rotation angle. 
                     
-                    self.servo_angles[index] = (int(finger_flexion[index]*(180/2.5)))
+                    self.servo_angles.append(int(finger_flexion[index]*(180/2.5)))
 
                     # flex_angle = (int(finger_flexion[index]*(180/2.5)))
                     # print self.servo_angles[index]
@@ -277,15 +277,17 @@ class SampleListener(Leap.Listener):
             self.start_leap = time.time()
           
             # if self.iterator >= 2: 
-            # print arduino.out_waiting
-            arduino.reset_output_buffer()
+            # arduino.reset_output_buffer()
 
-            # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
-            arduino.write('\n')
+            # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
+            # arduino.write('\n')
                     
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>7b', self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
-            
+            arduino.write(struct.pack('>8b',int(0),self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
+            # arduino.write(struct.pack('>7b',self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
+                       # arduino.reset_output_buffer()
+            # print arduino.out_waiting
+
             self.iterator = 0
 
             print self.servo_angles
