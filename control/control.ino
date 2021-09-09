@@ -7,7 +7,7 @@ int data;
 int data2;
 int data3;
 int mode;
-char buffer[9];
+char buffer[7];
 char buffer1[2];
 char mode_buffer[2];
 bool lock = false;
@@ -83,14 +83,21 @@ void setup()
 void loop()
 {
   LocalStartTime = millis();
-
-
-  if (lock == true)
+ 
   {
-//    Serial.flush();
-
-    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+  
+//  int test = Serial.read();
+//  lcd.print("        ");
+//    lcd.setCursor(7, 1);
+//    //    lcd.print("leap");
+//    lcd.print(test);
   }
+//  if (lock == true && test == '0')
+//  {
+////    Serial.flush();
+//
+////    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+//  }
 
   // if (mode_switcher < 500)
   // {
@@ -154,20 +161,20 @@ void loop()
   //  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   // if ((mode == 1 || mode == 2) && Serial.read() == '\n' && lock == true) // Only run when serial data is received
   //if (mode == 2 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  if (mode == 2 && int(buffer[0]) == 0 && lock == true) // Only run when serial data is received
+  if (mode == 2  && Serial.read() == 0 && lock == true) // Only run when serial data is received
   {
     // mode_switcher = 0;
     // memset(buffer, 0, sizeof(buffer));
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
-    //    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+        data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle = buffer[1] * 4;
-    servo_pointer_angle = buffer[2] * 4;
-    servo_middle_angle = buffer[3] * 4;
-    servo_ring_angle = buffer[4] * 4;
-    servo_pinky_angle = buffer[5] * 4;
-    servo_wrist_angle = buffer[6] * 4;
+    servo_thumb_angle = buffer[0] * 4;
+    servo_pointer_angle = buffer[1] * 4;
+    servo_middle_angle = buffer[2] * 4;
+    servo_ring_angle = buffer[3] * 4;
+    servo_pinky_angle = buffer[4] * 4;
+    servo_wrist_angle = buffer[5] * 4;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
@@ -186,10 +193,10 @@ void loop()
     //    Serial.print('\n');
     //    Serial.write(ElapsedTime/1000);
 
-    lcd.print("        ");
-    lcd.setCursor(7, 1);
-    //    lcd.print("leap");
-    lcd.print(Serial.available());
+//    lcd.print("        ");
+//    lcd.setCursor(7, 1);
+//    //    lcd.print("leap");
+//    lcd.print(Serial.available());
     // lcd.print(string(ElapsedTime));
 
     // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
@@ -237,7 +244,9 @@ void loop()
     flex_1_val = analogRead(flex_1);
     flex_1_val = map(flex_1_val, 200, 450, 0, 180);
 
-    if (Serial.read() == '\n' && lock == true)
+//    if (Serial.read() == '\n' && lock == true)
+    if (Serial.read() == 0 && lock == true)
+
     {
 
       // mode_switcher = 0;
@@ -319,7 +328,8 @@ void loop()
     flex_1_val = analogRead(flex_1);
     flex_1_val = map(flex_1_val, 200, 450, 0, 180);
 
-    if (Serial.read() == '\n' && lock == true)
+   //    if (Serial.read() == '\n' && lock == true)
+    if (Serial.read() == 0 && lock == true)
     {
 
       // mode_switcher = 0;
