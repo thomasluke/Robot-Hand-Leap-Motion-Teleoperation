@@ -181,7 +181,7 @@ class SampleListener(Leap.Listener):
                     self.latency_total_start = time.time()
 
                     latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
-                    print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+                    # print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
 
                     self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
                 
@@ -291,7 +291,7 @@ class SampleListener(Leap.Listener):
             self.iterator = 0
 
             # print self.servo_angles
-            # print int(self.data_confidence*100)
+            print int(self.data_confidence*100)
 
 
 def measure_latency(control_mode, lock = False):

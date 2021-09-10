@@ -7,7 +7,7 @@ int data;
 int data2;
 int data3;
 int mode;
-char buffer[7];
+char buffer[8];
 char buffer1[2];
 char mode_buffer[2];
 bool lock = false;
@@ -261,6 +261,8 @@ void loop()
       servo_pinky_angle = buffer[4] * 4;
       servo_wrist_angle = buffer[5] * 4;
 
+
+    
       leap_data_confidence = (double(buffer[6]) / 100);
 
       lcd.print("   ");
@@ -277,10 +279,15 @@ void loop()
       servo_ring_angle = ((leap_data_confidence * servo_ring_angle) + (glove_data_weight * flex_4_val)) / (servo_ring_angle + flex_4_val);
       servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle) + (glove_data_weight * flex_5_val)) / (servo_pinky_angle + flex_5_val);
       // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
-      lcd.print("        ");
+      lcd.print("   ");
       lcd.setCursor(7, 1);
       // lcd.print("combined");
       lcd.print(servo_middle_angle);
+
+      lcd.print("  ");
+       lcd.setCursor(1, 1);
+       // lcd.print("combined");
+       lcd.print(flex_3_val);
     }
     // else
     // {
@@ -290,10 +297,7 @@ void loop()
     //   servo_ring_angle = flex_1_val;
     //   servo_pinky_angle = flex_1_val;
 
-    //   lcd.print("        ");
-    //   lcd.setCursor(1, 1);
-    //   // lcd.print("combined");
-    //   lcd.print(servo_middle_angle);
+       
     // }
 
     // Rotate servo motors to the angles received through serial from Python
@@ -383,7 +387,7 @@ void loop()
 
       if (leap_data_confidence >= 0.1)
       {
-        leap_data_confidence = leap_data_confidence - 0.1;
+        leap_data_confidence = leap_data_confidence - 0.01;
       }
       else
       {
