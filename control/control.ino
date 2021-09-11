@@ -436,8 +436,8 @@ count = 0;
       flex_2_val_interp = map(flex_2_val, 180, 350, 0, 180);
       flex_1_val_interp = map(flex_1_val, 200, 450, 0, 180);
 
-      int test = servo_middle_angle_serial-flex_3_val_serial; 
-      servo_middle_angle_interp = (double(flex_3_val_interp+test) / double(flex_3_val_serial+test))* servo_middle_angle_serial;
+//      int test = servo_middle_angle_serial-flex_3_val_serial; 
+      servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial))*(double(servo_middle_angle_serial)/double(flex_3_val_serial))* servo_middle_angle_serial;
 
       // Weighted average combining Leap Motion Controller and Glove Control data
       servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (servo_thumb_angle_serial + flex_1_val);
