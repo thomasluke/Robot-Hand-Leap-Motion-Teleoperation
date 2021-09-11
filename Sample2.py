@@ -167,7 +167,7 @@ class SampleListener(Leap.Listener):
                 #     # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
                 #     arduino.write(struct.pack('>7b', self.servo_angles[0]/3, self.servo_angles[1]/2., self.servo_angles[2]/2, self.servo_angles[3]/2, self.servo_angles[4]/2, self.roll/2, self.data_confidence*100))
                     
-                #     time.sleep(0.02)
+                time.sleep(0.02)
 
                 if arduino.in_waiting>=1:
                     if arduino.read() == "\n":
@@ -206,7 +206,7 @@ class SampleListener(Leap.Listener):
                         print "LATENCY DATA SAVED TO CSV FILE" 
 
     def on_frame(self, controller):
-        
+        time.sleep(0.003)
         # Get the most recent frame and report some basic information
         frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
 
