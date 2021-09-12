@@ -112,33 +112,6 @@ void loop()
 {
   LocalStartTime = millis();
 
-  {
-
-    //  int test = Serial.read();
-    //  lcd.print("        ");
-    //    lcd.setCursor(7, 1);
-    //    //    lcd.print("leap");
-    //    lcd.print(test);
-  }
-  //  if (lock == true && test == '0')
-  //  {
-  ////    Serial.flush();
-  //
-  ////    data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
-  //  }
-
-  // if (mode_switcher < 500)
-  // {
-  //   mode_switcher++;
-  //   lcd.setCursor(0, 1);
-  //   lcd.print("      ");
-  //   lcd.setCursor(0, 1);
-  //   lcd.print(mode_switcher);
-  // }
-  // put your main code here, to run repeatedly:
-  // delay(100);
-  // Serial.setTimeout(50);
-
   //  if (Serial.available() > 0 && Serial.read() == '\n' && lock == false) // Only run when serial data is received
   if (Serial.read() == '\n' && lock == false) // Only run when serial data is received
   {
@@ -152,48 +125,43 @@ void loop()
 
     switch (mode)
     {
-      case 1:
-        lcd.setCursor(6, 0);
-        lcd.print("Auto");
-        break;
-      case 2:
-        lcd.setCursor(6, 0);
-        lcd.print("Leap");
-        break;
-      case 3:
-        lcd.setCursor(6, 0);
-        lcd.print("Glove");
-        break;
-      case 4:
-        lcd.setCursor(6, 0);
-        lcd.print("Key");
-        break;
-      case 5:
-        lcd.setCursor(6, 0);
-        lcd.print("Combined 1");
-        break;
-      case 6:
-        lcd.setCursor(6, 0);
-        lcd.print("Combined 2");
-        break;
-      default:
-        lcd.setCursor(6, 0);
-        lcd.print("Error");
-        break;
+    case 1:
+      lcd.setCursor(6, 0);
+      lcd.print("Auto");
+      break;
+    case 2:
+      lcd.setCursor(6, 0);
+      lcd.print("Leap");
+      break;
+    case 3:
+      lcd.setCursor(6, 0);
+      lcd.print("Glove");
+      break;
+    case 4:
+      lcd.setCursor(6, 0);
+      lcd.print("Key");
+      break;
+    case 5:
+      lcd.setCursor(6, 0);
+      lcd.print("Combined 1");
+      break;
+    case 6:
+      lcd.setCursor(6, 0);
+      lcd.print("Combined 2");
+      break;
+    default:
+      lcd.setCursor(6, 0);
+      lcd.print("Error");
+      break;
     }
     Serial.flush();
   }
 
-  // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
-  // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  //  if ((mode == 1 || mode == 2) && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  // if ((mode == 1 || mode == 2) && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  //if (mode == 2 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  if (mode == 2  && Serial.read() == 0 && lock == true) // Only run when serial data is received
+  // Leap Motion Control Mode
+  if (mode == 2 && Serial.read() == 0 && lock == true) // Only run when serial data is received
   {
-    // mode_switcher = 0;
-    // memset(buffer, 0, sizeof(buffer));
-    // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
+
+    // Read bytes (7 in this case) until the end of the buffer array (i.e. when the newline character is reached)
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
@@ -217,287 +185,11 @@ void loop()
     Serial.print('\n');
     Serial.print(ElapsedTime);
     SystemStartTime = millis();
-
-    //    Serial.print('\n');
-    //    Serial.write(ElapsedTime/1000);
-
-    //    lcd.print("        ");
-    //    lcd.setCursor(7, 1);
-    //    //    lcd.print("leap");
-    //    lcd.print(Serial.available());
-    // lcd.print(string(ElapsedTime));
-
-    // Values sent to I2C LCD used for debugging (As cannot easily display serial values received by Arduino for debugging, as python code is occupying COM3)
-
-    // lcd.clear();
-
-    // lcd.setCursor(0, 1);
-    // lcd.print(servo_thumb_angle);
-
-    // lcd.setCursor(0, 0);
-    // lcd.print(servo_pointer_angle);
-
-    // lcd.setCursor(4, 0);
-    // lcd.print(servo_middle_angle);
-
-    // lcd.setCursor(8, 0);
-    // lcd.print(servo_ring_angle);
-
-    // lcd.setCursor(12, 0);
-    // lcd.print(servo_pinky_angle);
-
-    // lcd.setCursor(12, 1);
-    // lcd.print(Serial.available()); // Number of bytes in the serial buffer (64 max - 0 -> 63)
-
-    //    Serial.flush();
   }
 
-  // Only read data when in mode 1 (Automatic control selection) or mode 2 (Leap Motion Control)
-  // Only read serial data when availble and after the newline character is received. This ensures the the same bytes are read every loop in the same sequence
-  // else if (mode == 5 && Serial.available() > 0 && Serial.read() == '\n' && lock == true) // Only run when serial data is received
-  else if (mode == 5) // Only run when serial data is received
-  {
-    flex_5_val = analogRead(flex_5);
-    flex_5_val = map(flex_5_val, 200, 450, 0, 180);
-
-    flex_4_val = analogRead(flex_4);
-    flex_4_val = map(flex_4_val, 200, 450, 0, 180);
-
-    flex_3_val = analogRead(flex_3);
-    flex_3_val = map(flex_3_val, 200, 450, 0, 180);
-
-    flex_2_val = analogRead(flex_2);
-    flex_2_val = map(flex_2_val, 180, 350, 0, 180);
-
-    flex_1_val = analogRead(flex_1);
-    flex_1_val = map(flex_1_val, 200, 450, 0, 180);
-
-    //    if (Serial.read() == '\n' && lock == true)
-    if (Serial.read() == 0 && lock == true)
-
-    {
-
-      // mode_switcher = 0;
-      // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
-      data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
-
-      // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-      servo_thumb_angle_serial = buffer[0] * 4;
-      servo_pointer_angle_serial = buffer[1] * 4;
-      servo_middle_angle_serial = buffer[2] * 4;
-      servo_ring_angle_serial = buffer[3] * 4;
-      servo_pinky_angle_serial = buffer[4] * 4;
-      servo_wrist_angle_serial = buffer[5] * 4;
-
-
-
-      leap_data_confidence = (double(buffer[6]) / 100);
-
-      lcd.print("   ");
-      lcd.setCursor(11, 1);
-      // lcd.print("combined");
-      lcd.print(leap_data_confidence);
-
-
-      glove_data_weight = 2 - leap_data_confidence;
-
-      // Weighted average combining Leap Motion Controller and Glove Control data
-      servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (servo_thumb_angle_serial + flex_1_val);
-      servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (servo_pointer_angle_serial + flex_2_val);
-      servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val)) / ((leap_data_confidence + glove_data_weight));
-      servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (servo_ring_angle_serial + flex_4_val);
-      servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (servo_pinky_angle_serial + flex_5_val);
-      // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
-      lcd.print("   ");
-      lcd.setCursor(7, 1);
-      // lcd.print("combined");
-      lcd.print(servo_middle_angle);
-
-      lcd.print("  ");
-      lcd.setCursor(1, 1);
-      // lcd.print("combined");
-      lcd.print(flex_3_val);
-    }
-    // else
-    // {
-    //   servo_thumb_angle = flex_1_val;
-    //   servo_pointer_angle = flex_1_val;
-    //   servo_middle_angle = flex_1_val;
-    //   servo_ring_angle = flex_1_val;
-    //   servo_pinky_angle = flex_1_val;
-
-
-    // }
-
-    // Rotate servo motors to the angles received through serial from Python
-    servo_thumb.write(servo_thumb_angle);
-    servo_pointer.write(servo_pointer_angle);
-    servo_middle.write(servo_middle_angle);
-    servo_ring.write(servo_ring_angle);
-    servo_pinky.write(servo_pinky_angle);
-    servo_wrist.write(servo_wrist_angle);
-
-    CurrentTime = millis();
-    ElapsedTime = CurrentTime - LocalStartTime;
-    Serial.print('\n');
-    Serial.print(ElapsedTime);
-    SystemStartTime = millis();
-  }
-
-  else if (mode == 6) // Only run when serial data is received
-  {
-    flex_5_val = analogRead(flex_5);
-    flex_4_val = analogRead(flex_4);
-    flex_3_val = analogRead(flex_3);
-    flex_2_val = analogRead(flex_2);
-    flex_1_val = analogRead(flex_1);
-
-    //    if (Serial.read() == '\n' && lock == true)
-    if (Serial.read() == 0 && lock == true)
-
-    {
-
-      // mode_switcher = 0;
-      // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
-      data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
-
-      // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-      servo_thumb_angle_serial = buffer[0] * 4;
-      servo_pointer_angle_serial = buffer[1] * 4;
-      servo_middle_angle_serial = buffer[2] * 4;
-      servo_ring_angle_serial = buffer[3] * 4;
-      servo_pinky_angle_serial = buffer[4] * 4;
-      servo_wrist_angle_serial = buffer[5] * 4;
-
-
-
-      leap_data_confidence = (double(buffer[6]) / 100);
-
-      lcd.print("   ");
-      lcd.setCursor(11, 1);
-      // lcd.print("combined");
-      lcd.print(leap_data_confidence);
-
-
-      glove_data_weight = 2 - leap_data_confidence;
-
-    flex_5_val_serial = map(flex_5_val, 200, 450, 0, 180);
-    flex_4_val_serial = map(flex_4_val, 200, 450, 0, 180);
-    flex_3_val_serial = map(flex_3_val, 200, 450, 0, 180);
-    flex_2_val_serial = map(flex_2_val, 180, 350, 0, 180);
-    flex_1_val_serial = map(flex_1_val, 200, 450, 0, 180);
-
-      // Weighted average combining Leap Motion Controller and Glove Control data
-      servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (servo_thumb_angle_serial + flex_1_val);
-      servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (servo_pointer_angle_serial + flex_2_val);
-      servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val_serial)) / ((leap_data_confidence + glove_data_weight));
-      servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (servo_ring_angle_serial + flex_4_val);
-      servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (servo_pinky_angle_serial + flex_5_val);
-      // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
-      
-      // Rotate servo motors to the angles received through serial from Python
-    servo_thumb.write(servo_thumb_angle);
-    servo_pointer.write(servo_pointer_angle);
-    servo_middle.write(servo_middle_angle);
-    servo_ring.write(servo_ring_angle);
-    servo_pinky.write(servo_pinky_angle);
-//    servo_wrist.write(servo_wrist_angle);
-
-count = 0;
-      lcd.print("   ");
-      lcd.setCursor(7, 1);
-      // lcd.print("combined");
-      lcd.print(servo_middle_angle);
-
-//      lcd.print("  ");
-//      lcd.setCursor(1, 1);
-//      // lcd.print("combined");
-//      lcd.print(servo_middle_angle);
-
-     
-    }
-    // else
-    // {
-    //   servo_thumb_angle = flex_1_val;
-    //   servo_pointer_angle = flex_1_val;
-    //   servo_middle_angle = flex_1_val;
-    //   servo_ring_angle = flex_1_val;
-    //   servo_pinky_angle = flex_1_val;
-
-
-    // }
-
-        else
-    {
-
-      flex_5_val_interp = map(flex_5_val, 200, 450, 0, 180);
-      flex_4_val_interp = map(flex_4_val, 200, 450, 0, 180);
-      flex_3_val_interp = map(flex_3_val, 200, 450, 0, 180);
-      flex_2_val_interp = map(flex_2_val, 180, 350, 0, 180);
-      flex_1_val_interp = map(flex_1_val, 200, 450, 0, 180);
-
-//      int test = servo_middle_angle_serial-flex_3_val_serial; 
-      servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial))*(double(servo_middle_angle_serial)/double(flex_3_val_serial))* servo_middle_angle_serial;
-
-      // Weighted average combining Leap Motion Controller and Glove Control data
-      servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (servo_thumb_angle_serial + flex_1_val);
-      servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (servo_pointer_angle_serial + flex_2_val);
-      servo_middle_angle_interp = ((leap_data_confidence * servo_middle_angle_interp) + (glove_data_weight * flex_3_val_interp)) / ((leap_data_confidence + glove_data_weight));
-      servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (servo_ring_angle_serial + flex_4_val);
-      servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (servo_pinky_angle_serial + flex_5_val);
-      
-      // Rotate servo motors to the angles received through serial from Python
-      servo_thumb.write(servo_thumb_angle);
-      servo_pointer.write(servo_pointer_angle);
-      servo_middle.write(servo_middle_angle_interp);
-      servo_ring.write(servo_ring_angle);
-      servo_pinky.write(servo_pinky_angle);
-      servo_wrist.write(servo_wrist_angle);
-      // servo_thumb_angle = flex_1_val;
-      // servo_pointer_angle = flex_1_val;
-      // servo_middle_angle = flex_1_val;
-      // servo_ring_angle = flex_1_val;
-      // servo_pinky_angle = flex_1_val;
-
-      //      if (leap_data_confidence >= 0.1)
-      //      {
-      //        leap_data_confidence = leap_data_confidence - 0.001;
-      //      }
-      //      else
-      //      {
-      //        leap_data_confidence = 0;
-      //      }
-      if (count >= 3000)
-      {
-        leap_data_confidence = 0;
-      }
-      count++;
-      //      glove_data_weight = 1 - leap_data_confidence;
-
-      lcd.print("   ");
-      lcd.setCursor(1, 1);
-      // lcd.print("combined");
-      lcd.print(servo_middle_angle_interp);
-    }
-
-
-
-    CurrentTime = millis();
-    ElapsedTime = CurrentTime - LocalStartTime;
-    Serial.print('\n');
-    Serial.print(ElapsedTime);
-    SystemStartTime = millis();
-  }
-
-  // True if in mode 1 (Automatic control selection) or mode 3 (Glove control)
-  // True if serial data is not availble
-  // else if ((mode == 1 || mode == 3) && mode_switcher >= 500)
+  // Glove Control Mode
   else if (mode == 3)
   {
-    // Put glove control code here
-    // Can use LCD message to debug whether these mode if statements are working
-    // Main check will be to see whether this "else if" is triggered at the correct times in mode 1 (Automatic control).
-    // Also need to make sure this mode doesnt trigger inbetween serial signals! (maybe/probably remove if too buggy?!?!)
 
     flex_5_val = analogRead(flex_5);
     flex_5_val = map(flex_5_val, 200, 450, 0, 180);
@@ -525,9 +217,7 @@ count = 0;
     Serial.print('\n');
     Serial.print(ElapsedTime);
     SystemStartTime = millis();
-    //    delay(100);
 
-    //    //    mode_switcher++;
     lcd.clear();
 
     lcd.setCursor(0, 1);
@@ -537,6 +227,7 @@ count = 0;
     lcd.print(flex_3_val);
   }
 
+  // Keyboard Control Mode
   else if (mode == 4)
   {
     // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
@@ -557,6 +248,208 @@ count = 0;
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
     servo_wrist.write(servo_wrist_angle);
+
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - LocalStartTime;
+    Serial.print('\n');
+    Serial.print(ElapsedTime);
+    SystemStartTime = millis();
+  }
+
+  // Combined Control Mode
+  else if (mode == 5) // Only run when serial data is received
+  {
+    flex_5_val = analogRead(flex_5);
+    flex_5_val = map(flex_5_val, 200, 450, 0, 180);
+
+    flex_4_val = analogRead(flex_4);
+    flex_4_val = map(flex_4_val, 200, 450, 0, 180);
+
+    flex_3_val = analogRead(flex_3);
+    flex_3_val = map(flex_3_val, 200, 450, 0, 180);
+
+    flex_2_val = analogRead(flex_2);
+    flex_2_val = map(flex_2_val, 180, 350, 0, 180);
+
+    flex_1_val = analogRead(flex_1);
+    flex_1_val = map(flex_1_val, 200, 450, 0, 180);
+
+    //    if (Serial.read() == '\n' && lock == true)
+    if (Serial.read() == 0 && lock == true)
+
+    {
+
+      // mode_switcher = 0;
+      // Read bytes (7 in this case) until the end of the buffer array (i.e. when the newline character is reached)
+      data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+
+      // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
+      servo_thumb_angle_serial = buffer[0] * 4;
+      servo_pointer_angle_serial = buffer[1] * 4;
+      servo_middle_angle_serial = buffer[2] * 4;
+      servo_ring_angle_serial = buffer[3] * 4;
+      servo_pinky_angle_serial = buffer[4] * 4;
+      servo_wrist_angle_serial = buffer[5] * 4;
+
+      leap_data_confidence = (double(buffer[6]) / 100);
+
+      lcd.print("   ");
+      lcd.setCursor(11, 1);
+      // lcd.print("combined");
+      lcd.print(leap_data_confidence);
+
+      glove_data_weight = 2 - leap_data_confidence;
+
+      // Weighted average combining Leap Motion Controller and Glove Control data
+      servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (leap_data_confidence + glove_data_weight);
+      servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (leap_data_confidence + glove_data_weight);
+      servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val)) / (leap_data_confidence + glove_data_weight);
+      servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (leap_data_confidence + glove_data_weight);
+      servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight);
+      // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
+
+      lcd.print("   ");
+      lcd.setCursor(7, 1);
+      // lcd.print("combined");
+      lcd.print(servo_middle_angle);
+
+      lcd.print("  ");
+      lcd.setCursor(1, 1);
+      // lcd.print("combined");
+      lcd.print(flex_3_val);
+    }
+
+    // Rotate servo motors to the angles received through serial from Python
+    servo_thumb.write(servo_thumb_angle);
+    servo_pointer.write(servo_pointer_angle);
+    servo_middle.write(servo_middle_angle);
+    servo_ring.write(servo_ring_angle);
+    servo_pinky.write(servo_pinky_angle);
+    servo_wrist.write(servo_wrist_angle);
+
+    CurrentTime = millis();
+    ElapsedTime = CurrentTime - LocalStartTime;
+    Serial.print('\n');
+    Serial.print(ElapsedTime);
+    SystemStartTime = millis();
+  }
+
+  // Combined Control Interpolated Leap Data
+  else if (mode == 6) // Only run when serial data is received
+  {
+    flex_5_val = analogRead(flex_5);
+    flex_4_val = analogRead(flex_4);
+    flex_3_val = analogRead(flex_3);
+    flex_2_val = analogRead(flex_2);
+    flex_1_val = analogRead(flex_1);
+
+    //    if (Serial.read() == '\n' && lock == true)
+    if (Serial.read() == 0 && lock == true)
+
+    {
+
+      // mode_switcher = 0;
+      // Read bytes (5 in this case) until the end of the buffer array (i.e. when the newline character is reached)
+      data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
+
+      // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
+      servo_thumb_angle_serial = buffer[0] * 4;
+      servo_pointer_angle_serial = buffer[1] * 4;
+      servo_middle_angle_serial = buffer[2] * 4;
+      servo_ring_angle_serial = buffer[3] * 4;
+      servo_pinky_angle_serial = buffer[4] * 4;
+      servo_wrist_angle_serial = buffer[5] * 4;
+
+      leap_data_confidence = (double(buffer[6]) / 100);
+
+      lcd.print("   ");
+      lcd.setCursor(11, 1);
+      // lcd.print("combined");
+      lcd.print(leap_data_confidence);
+
+      glove_data_weight = 2 - leap_data_confidence;
+
+      flex_5_val_serial = map(flex_5_val, 200, 450, 0, 180);
+      flex_4_val_serial = map(flex_4_val, 200, 450, 0, 180);
+      flex_3_val_serial = map(flex_3_val, 200, 450, 0, 180);
+      flex_2_val_serial = map(flex_2_val, 180, 350, 0, 180);
+      flex_1_val_serial = map(flex_1_val, 200, 450, 0, 180);
+
+      // Weighted average combining Leap Motion Controller and Glove Control data
+      servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight);
+      servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_serial)) / (leap_data_confidence + glove_data_weight);
+      servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val_serial)) / (leap_data_confidence + glove_data_weight);
+      servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_serial)) / (leap_data_confidence + glove_data_weight);
+      servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_serial)) / (leap_data_confidence + glove_data_weight);
+      // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
+
+      // Rotate servo motors to the angles received through serial from Python
+      servo_thumb.write(servo_thumb_angle);
+      servo_pointer.write(servo_pointer_angle);
+      servo_middle.write(servo_middle_angle);
+      servo_ring.write(servo_ring_angle);
+      servo_pinky.write(servo_pinky_angle);
+      //    servo_wrist.write(servo_wrist_angle);
+
+      count = 0;
+      lcd.print("   ");
+      lcd.setCursor(7, 1);
+      // lcd.print("combined");
+      lcd.print(servo_middle_angle);
+
+      //      lcd.print("  ");
+      //      lcd.setCursor(1, 1);
+      //      // lcd.print("combined");
+      //      lcd.print(servo_middle_angle);
+    }
+
+    else
+    {
+
+      flex_5_val_interp = map(flex_5_val, 200, 450, 0, 180);
+      flex_4_val_interp = map(flex_4_val, 200, 450, 0, 180);
+      flex_3_val_interp = map(flex_3_val, 200, 450, 0, 180);
+      flex_2_val_interp = map(flex_2_val, 180, 350, 0, 180);
+      flex_1_val_interp = map(flex_1_val, 200, 450, 0, 180);
+
+      servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial)) * (double(servo_middle_angle_serial) / double(flex_3_val_serial)) * servo_middle_angle_serial;
+
+      // Weighted average combining Leap Motion Controller and Glove Control data
+      servo_thumb_angle_interp = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_interp)) / (leap_data_confidence + glove_data_weight);
+      servo_pointer_angle_interp = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_interp)) / (leap_data_confidence + glove_data_weight);
+      servo_middle_angle_interp_interp = ((leap_data_confidence * servo_middle_angle_interp) + (glove_data_weight * flex_3_val_interp)) / (leap_data_confidence + glove_data_weight);
+      servo_ring_angle_interp = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_interp)) / (leap_data_confidence + glove_data_weight);
+      servo_pinky_angle_interp = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_interp)) / (leap_data_confidence + glove_data_weight);
+
+      // Rotate servo motors to the angles received through serial from Python
+      servo_thumb.write(servo_thumb_angle_interp);
+      servo_pointer.write(servo_pointer_angle_interp);
+      servo_middle.write(servo_middle_angle_interp);
+      servo_ring.write(servo_ring_angle_interp);
+      servo_pinky.write(servo_pinky_angle_interp);
+      servo_wrist.write(servo_wrist_angle_interp);
+
+      //      if (leap_data_confidence >= 0.1)
+      //      {
+      //        leap_data_confidence = leap_data_confidence - 0.001;
+      //      }
+      //      else
+      //      {
+      //        leap_data_confidence = 0;
+      //      }
+
+      // Changes to 100% glove control mode if Leap Motion controller is not receiving hand tracking data
+      if (count >= 3000)
+      {
+        leap_data_confidence = 0;
+      }
+      count++;
+
+      lcd.print("   ");
+      lcd.setCursor(1, 1);
+      // lcd.print("combined");
+      lcd.print(servo_middle_angle_interp);
+    }
 
     CurrentTime = millis();
     ElapsedTime = CurrentTime - LocalStartTime;
