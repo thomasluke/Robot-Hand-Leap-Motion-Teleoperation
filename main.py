@@ -89,7 +89,8 @@ class SampleListener(Leap.Listener):
 
     def run(self):
         # threading.Thread(target = main, args=(self,)).start()
-        threading.Thread(target = self.measure_latency).start()
+        # threading.Thread(target = self.measure_latency).start()
+        threading.Thread(target = self.measure_gestures).start()
     
     def measure_latency(self):
 
@@ -133,6 +134,30 @@ class SampleListener(Leap.Listener):
                         
                         print "LATENCY DATA SAVED TO CSV FILE" 
 
+    def measure_gestures(self):
+        
+        if arduino.in_waiting>=1:
+            if arduino.read() == "\n":
+                index = 0
+                serial_finger_angles = [0,0,0,0,0]
+                while index <5: 
+                    serial_finger_angles[index] = int(arduino.read_until(expected = "\n"))
+                    arduino.reset_input_buffer()
+                    if self.lock2 == False:
+                        self.latency_total_start = time.time()
+                        self.lock2 == True
+                    index = index + 1
+
+                if (serial_finger_angles[0]>=180 and serial_finger_angles[1]>=180 and serial_finger_angles[2]<=35 and serial_finger_angles[3]<=35 and serial_finger_angles[4]>=180):
+                    self.latency_total_end = time.time()
+                    self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
+
+                    print "Pose 1 Achieved in " + str(self.latency_total) + " seconds. Change to pose 2"
+
+                    self.latency_total_start = time.time()
+
+        
+    
     def on_frame(self, controller):
         time.sleep(0.003)
         # Get the most recent frame and report some basic information
@@ -208,7 +233,7 @@ class SampleListener(Leap.Listener):
 
             self.iterator = 0
 
-            print "Finger Angles: " + self.servo_angles + "Leap Data Confidence: " + int(self.data_confidence*100)
+            print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
             
 def measure_latency(control_mode, lock = False):
 
