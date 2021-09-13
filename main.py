@@ -147,14 +147,14 @@ class SampleListener(Leap.Listener):
                         self.latency_total_start = time.time()
                         self.lock2 == True
                     index = index + 1
+                print serial_finger_angles
+                # if (serial_finger_angles[0]>=180 and serial_finger_angles[1]>=180 and serial_finger_angles[2]<=35 and serial_finger_angles[3]<=35 and serial_finger_angles[4]>=180):
+                #     self.latency_total_end = time.time()
+                #     self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
 
-                if (serial_finger_angles[0]>=180 and serial_finger_angles[1]>=180 and serial_finger_angles[2]<=35 and serial_finger_angles[3]<=35 and serial_finger_angles[4]>=180):
-                    self.latency_total_end = time.time()
-                    self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
+                #     print "Pose 1 Achieved in " + str(self.latency_total) + " seconds. Change to pose 2"
 
-                    print "Pose 1 Achieved in " + str(self.latency_total) + " seconds. Change to pose 2"
-
-                    self.latency_total_start = time.time()
+                    # self.latency_total_start = time.time()
 
         
     
@@ -233,7 +233,7 @@ class SampleListener(Leap.Listener):
 
             self.iterator = 0
 
-            print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
+            # print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
             
 def measure_latency(control_mode, lock = False):
 
@@ -339,9 +339,25 @@ def main():
             # Remove the sample listener when done
             controller.remove_listener(listener)
     elif mode == "3":
-        
-        while True:
-            measure_latency("Glove")
+        print "test"
+        # while True:
+        #     measure_latency("Glove")
+        # while True:
+        #     # while True:
+        #     #     measure_latency("Glove")
+        #     # if arduino.in_waiting>=1:
+        #     if arduino.read() == "\n":
+        #         index = 0
+        #         serial_finger_angles = [0,0,0,0,0]
+        #         while index <5: 
+        #             serial_finger_angles[index] = (arduino.read_until(expected = " "))
+        #             # if self.lock2 == False:
+        #             #     self.latency_total_start = time.time()
+        #             #     self.lock2 == True
+        #             index = index + 1
+        #         print serial_finger_angles
+        #     arduino.reset_input_buffer()
+
             
     elif mode == "4":
 

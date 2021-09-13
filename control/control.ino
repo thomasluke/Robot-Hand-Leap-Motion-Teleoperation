@@ -81,6 +81,7 @@ int flex_2_val_interp;
 int flex_1_val_interp;
 
 int count = 0;
+int count2 = 0;
 
 // Setup the I2C LCD display
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
@@ -124,34 +125,34 @@ void ModeSelection()
 
     switch (mode)
     {
-    case 1:
-      lcd.setCursor(6, 0);
-      lcd.print("Auto");
-      break;
-    case 2:
-      lcd.setCursor(6, 0);
-      lcd.print("Leap");
-      break;
-    case 3:
-      lcd.setCursor(6, 0);
-      lcd.print("Glove");
-      break;
-    case 4:
-      lcd.setCursor(6, 0);
-      lcd.print("Key");
-      break;
-    case 5:
-      lcd.setCursor(6, 0);
-      lcd.print("Combined 1");
-      break;
-    case 6:
-      lcd.setCursor(6, 0);
-      lcd.print("Combined 2");
-      break;
-    default:
-      lcd.setCursor(6, 0);
-      lcd.print("Error");
-      break;
+      case 1:
+        lcd.setCursor(6, 0);
+        lcd.print("Auto");
+        break;
+      case 2:
+        lcd.setCursor(6, 0);
+        lcd.print("Leap");
+        break;
+      case 3:
+        lcd.setCursor(6, 0);
+        lcd.print("Glove");
+        break;
+      case 4:
+        lcd.setCursor(6, 0);
+        lcd.print("Key");
+        break;
+      case 5:
+        lcd.setCursor(6, 0);
+        lcd.print("Combined 1");
+        break;
+      case 6:
+        lcd.setCursor(6, 0);
+        lcd.print("Combined 2");
+        break;
+      default:
+        lcd.setCursor(6, 0);
+        lcd.print("Error");
+        break;
     }
     Serial.flush();
   }
@@ -160,8 +161,8 @@ void ModeSelection()
 void Mode2()
 {
   // Leap Motion Control Mode
-  int test = Serial.read();
-  if (test == 0) // Only run when serial data is received
+//  int test = Serial.read();
+  if (Serial.read() == 0) // Only run when serial data is received
   {
 
     // Read bytes (7 in this case) until the end of the buffer array (i.e. when the newline character is reached)
@@ -185,10 +186,10 @@ void Mode2()
 
     LatencyMeasure();
   }
-  lcd.print("   ");
-  lcd.setCursor(11, 1);
-  // lcd.print("combined");
-  lcd.print(test);
+//  lcd.print("   ");
+//  lcd.setCursor(11, 1);
+//  // lcd.print("combined");
+//  lcd.print(test);
 }
 
 void Mode3()
@@ -216,15 +217,15 @@ void Mode3()
   servo_ring.write(flex_4_val);    //A4
   servo_pinky.write(flex_5_val);   //A5
 
-  LatencyMeasure();
+  //  LatencyMeasure();
 
-  lcd.clear();
-
-  lcd.setCursor(0, 1);
-  //   lcd.print("                ");
-  //   lcd.setCursor(0, 1);
-  //  lcd.print("glovemode");
-  lcd.print(flex_3_val);
+//  lcd.clear();
+//
+//  lcd.setCursor(0, 1);
+//  //   lcd.print("                ");
+//  //   lcd.setCursor(0, 1);
+//  //  lcd.print("glovemode");
+//  lcd.print(flex_3_val);
 }
 
 void Mode4()
@@ -451,14 +452,46 @@ void Mode6()
 
 void ServoChecker()
 {
+  if (count >=500)
+  {
+    count = 0;
+  lcd.setCursor(0, 1);  
+  lcd.print("                ");
+  lcd.setCursor(0, 1);
+  lcd.print(servo_thumb.read());
+  
+  lcd.setCursor(3, 1);
+  lcd.print(servo_pointer.read());
+  
+  lcd.setCursor(6, 1);
+  lcd.print(servo_middle.read());
+  
+  lcd.setCursor(9, 1);
+  lcd.print(servo_ring.read());
+  
+  lcd.setCursor(12, 1);
+  lcd.print(servo_pinky.read());
+  }
+  count ++;
 
-  Serial.print('\n');
-  Serial.print(servo_thumb.read());
-  Serial.print(servo_pointer.read());
-  Serial.print(servo_middle.read());
-  Serial.print(servo_ring.read());
-  Serial.print(servo_pinky.read());
-  Serial.print(servo_wrist.read());
+//  //  Serial.print('\n');
+//    Serial.print(servo_thumb.read());
+//    Serial.print(' ');
+//    Serial.print(servo_pointer.read());
+//      Serial.print(' ');
+//  
+//    Serial.print(servo_middle.read());
+//      Serial.print(' ');
+//  
+//    Serial.print(servo_ring.read());
+//    Serial.print(' ');
+//  
+//    Serial.print(servo_pinky.read());
+//    Serial.print(' ');
+//  
+//    Serial.print(servo_wrist.read());
+//      Serial.print(' ');
+
 }
 
 void LatencyMeasure()
@@ -484,25 +517,25 @@ void loop()
 
     switch (mode)
     {
-    // case 1:
-    //   Mode1();
-    //   break;
-    case 2:
-      Mode2();
-      break;
-    case 3:
-      Mode3();
-      break;
-    case 4:
-      Mode4();
-      break;
-    case 5:
-      Mode5();
-      break;
-    case 6:
-      Mode6();
-      break;
+      // case 1:
+      //   Mode1();
+      //   break;
+      case 2:
+        Mode2();
+        break;
+      case 3:
+        Mode3();
+        break;
+      case 4:
+        Mode4();
+        break;
+      case 5:
+        Mode5();
+        break;
+      case 6:
+        Mode6();
+        break;
     }
-    //        ServoChecker();
+            ServoChecker();
   }
 }
