@@ -10,9 +10,13 @@ int mode;
 char buffer[8];
 char buffer1[2];
 char mode_buffer[2];
+int servo_angles = [ 0, 0, 0, 0, 0 ];
 bool lock = false;
 double leap_data_confidence;
 double glove_data_weight;
+int gesture = 1;
+int gesture_increment = 1;
+int gesture_latencies[11];
 
 unsigned long LocalStartTime = millis();
 unsigned long SystemStartTime = millis();
@@ -125,34 +129,34 @@ void ModeSelection()
 
     switch (mode)
     {
-      case 1:
-        lcd.setCursor(6, 0);
-        lcd.print("Auto");
-        break;
-      case 2:
-        lcd.setCursor(6, 0);
-        lcd.print("Leap");
-        break;
-      case 3:
-        lcd.setCursor(6, 0);
-        lcd.print("Glove");
-        break;
-      case 4:
-        lcd.setCursor(6, 0);
-        lcd.print("Key");
-        break;
-      case 5:
-        lcd.setCursor(6, 0);
-        lcd.print("Combined 1");
-        break;
-      case 6:
-        lcd.setCursor(6, 0);
-        lcd.print("Combined 2");
-        break;
-      default:
-        lcd.setCursor(6, 0);
-        lcd.print("Error");
-        break;
+    case 1:
+      lcd.setCursor(6, 0);
+      lcd.print("Auto");
+      break;
+    case 2:
+      lcd.setCursor(6, 0);
+      lcd.print("Leap");
+      break;
+    case 3:
+      lcd.setCursor(6, 0);
+      lcd.print("Glove");
+      break;
+    case 4:
+      lcd.setCursor(6, 0);
+      lcd.print("Key");
+      break;
+    case 5:
+      lcd.setCursor(6, 0);
+      lcd.print("Combined 1");
+      break;
+    case 6:
+      lcd.setCursor(6, 0);
+      lcd.print("Combined 2");
+      break;
+    default:
+      lcd.setCursor(6, 0);
+      lcd.print("Error");
+      break;
     }
     Serial.flush();
   }
@@ -161,7 +165,7 @@ void ModeSelection()
 void Mode2()
 {
   // Leap Motion Control Mode
-//  int test = Serial.read();
+  //  int test = Serial.read();
   if (Serial.read() == 0) // Only run when serial data is received
   {
 
@@ -186,10 +190,10 @@ void Mode2()
 
     LatencyMeasure();
   }
-//  lcd.print("   ");
-//  lcd.setCursor(11, 1);
-//  // lcd.print("combined");
-//  lcd.print(test);
+  //  lcd.print("   ");
+  //  lcd.setCursor(11, 1);
+  //  // lcd.print("combined");
+  //  lcd.print(test);
 }
 
 void Mode3()
@@ -219,13 +223,13 @@ void Mode3()
 
   //  LatencyMeasure();
 
-//  lcd.clear();
-//
-//  lcd.setCursor(0, 1);
-//  //   lcd.print("                ");
-//  //   lcd.setCursor(0, 1);
-//  //  lcd.print("glovemode");
-//  lcd.print(flex_3_val);
+  //  lcd.clear();
+  //
+  //  lcd.setCursor(0, 1);
+  //  //   lcd.print("                ");
+  //  //   lcd.setCursor(0, 1);
+  //  //  lcd.print("glovemode");
+  //  lcd.print(flex_3_val);
 }
 
 void Mode4()
@@ -450,48 +454,207 @@ void Mode6()
   LatencyMeasure();
 }
 
-void ServoChecker()
+void ServoGestureChecker()
 {
-  if (count >=500)
-  {
-    count = 0;
-  lcd.setCursor(0, 1);  
+
+  servo_angles = [ servo_thumb.read(), servo_pointer.read(), servo_middle.read(), servo_ring.read(), servo_pinky.read() ];
+
+  // if (count >= 500)
+  // {
+  //   count = 0;
+  //   lcd.setCursor(0, 1);
+  //   lcd.print("                ");
+  //   lcd.setCursor(0, 1);
+  //   lcd.print(servo_angles[0]);
+
+  //   lcd.setCursor(3, 1);
+  //   lcd.print(servo_angles[1]);
+
+  //   lcd.setCursor(6, 1);
+  //   lcd.print(servo_angles[2]);
+
+  //   lcd.setCursor(9, 1);
+  //   lcd.print(servo_angles[3]);
+
+  //   lcd.setCursor(12, 1);
+  //   lcd.print(servo_angles[4]);
+  // }
+  // count++;
+
+  lcd.setCursor(0, 1);
   lcd.print("                ");
   lcd.setCursor(0, 1);
-  lcd.print(servo_thumb.read());
-  
-  lcd.setCursor(3, 1);
-  lcd.print(servo_pointer.read());
-  
-  lcd.setCursor(6, 1);
-  lcd.print(servo_middle.read());
-  
-  lcd.setCursor(9, 1);
-  lcd.print(servo_ring.read());
-  
-  lcd.setCursor(12, 1);
-  lcd.print(servo_pinky.read());
+
+  switch (gesture)
+  {
+  case 0:
+    
+    lcd.print("Close Fist for next");
+
+    // Closed fist reset for next gesture
+    if (servo_angles[0] <= 170 && servo_angles[1] <= 170 && servo_angles[2] <= 170 && servo_angles[3] <= 170 && servo_angles[4] <= 170)
+    {
+      gesture_increment++;
+      gesture = gesture_increment
+    }
+    if (gesture_increment == 11 && servo_angles[0] <= 170)
+    {
+      gesture_increment = 1;
+      gesture = gesture_increment
+    }
+    break;
+  case 1:
+
+    lcd.print("Close fist for next");
+
+    // Closed fist
+    if (servo_angles[0] >= 170 && servo_angles[1] >= 170 && servo_angles[2] >= 170 && servo_angles[3] >= 170 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+
+  case 2:
+
+    lcd.print("Point thumb for next");
+
+    // Point thumb
+    if (servo_angles[0] <= 20 && servo_angles[1] >= 170 && servo_angles[2] >= 170 && servo_angles[3] >= 170 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+
+  case 3:
+
+    lcd.print("Point pointer for next");
+
+    // Point Pointer finger
+    if (servo_angles[0] >= 170 && servo_angles[1] <= 20 && servo_angles[2] >= 170 && servo_angles[3] >= 170 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+
+  case 4:
+
+    lcd.print("Point middle for next");
+
+    // Point Middle finger
+    if (servo_angles[0] >= 170 && servo_angles[1] >= 170 && servo_angles[2] <= 20 && servo_angles[3] >= 170 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+
+  case 5:
+
+    lcd.print("Point ring for next");
+
+    // Point Ring finger
+    if (servo_angles[0] >= 170 && servo_angles[1] >= 170 && servo_angles[2] >= 170 && servo_angles[3] <= 20 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+  case 6:
+
+    lcd.print("Point pinky for next");
+
+    // Point Pinky finger
+    if (servo_angles[0] >= 170 && servo_angles[1] >= 170 && servo_angles[2] >= 170 && servo_angles[3] >= 170 && servo_angles[4] <= 20)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+  case 7:
+
+    lcd.print("Point po and m for next");
+
+    // Point Pointer and Middle finger
+    if (servo_angles[0] >= 170 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] >= 170 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+  case 8:
+
+    lcd.print("Point po, m and r for next");
+
+    // Point Pointer, Middle and Ring finger
+    if (servo_angles[0] >= 170 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] <= 20 && servo_angles[4] >= 170)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+  case 9:
+
+    lcd.print("Point po, m, r and pi for next");
+
+    // Point Pointer, Middle, Ring and Pinky finger
+    if (servo_angles[0] >= 170 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] <= 20 && servo_angles[4] <= 20)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 0;
+    }
+    break;
+  case 10:
+
+    lcd.print("Point t, po, m, r and pi for next");
+
+    // Point Thumb, Pointer, Middle, Ring and Pinky finger
+    if (servo_angles[0] <= 170 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] <= 20 && servo_angles[4] <= 20)
+    {
+      CurrentTime = millis();
+      gesture_latencies[gesture - 1] = CurrentTime - LocalStartTime;
+      gesture = 11;
+    }
+    break;
+  case 11:
+    gesture = 0;
+
+    Serial.print('\n');
+    for (int i = 0; i < gesture_latencies.size(); i++)
+    {
+      Serial.print(gesture_latencies[i]);
+    }
+    Serial.print('\n');
   }
-  count ++;
 
-//  //  Serial.print('\n');
-//    Serial.print(servo_thumb.read());
-//    Serial.print(' ');
-//    Serial.print(servo_pointer.read());
-//      Serial.print(' ');
-//  
-//    Serial.print(servo_middle.read());
-//      Serial.print(' ');
-//  
-//    Serial.print(servo_ring.read());
-//    Serial.print(' ');
-//  
-//    Serial.print(servo_pinky.read());
-//    Serial.print(' ');
-//  
-//    Serial.print(servo_wrist.read());
-//      Serial.print(' ');
-
+  //  //  Serial.print('\n');
+  //    Serial.print(servo_thumb.read());
+  //    Serial.print(' ');
+  //    Serial.print(servo_pointer.read());
+  //      Serial.print(' ');
+  //
+  //    Serial.print(servo_middle.read());
+  //      Serial.print(' ');
+  //
+  //    Serial.print(servo_ring.read());
+  //    Serial.print(' ');
+  //
+  //    Serial.print(servo_pinky.read());
+  //    Serial.print(' ');
+  //
+  //    Serial.print(servo_wrist.read());
+  //      Serial.print(' ');
 }
 
 void LatencyMeasure()
@@ -517,25 +680,25 @@ void loop()
 
     switch (mode)
     {
-      // case 1:
-      //   Mode1();
-      //   break;
-      case 2:
-        Mode2();
-        break;
-      case 3:
-        Mode3();
-        break;
-      case 4:
-        Mode4();
-        break;
-      case 5:
-        Mode5();
-        break;
-      case 6:
-        Mode6();
-        break;
+    // case 1:
+    //   Mode1();
+    //   break;
+    case 2:
+      Mode2();
+      break;
+    case 3:
+      Mode3();
+      break;
+    case 4:
+      Mode4();
+      break;
+    case 5:
+      Mode5();
+      break;
+    case 6:
+      Mode6();
+      break;
     }
-            ServoChecker();
+    ServoGestureChecker();
   }
 }

@@ -136,26 +136,56 @@ class SampleListener(Leap.Listener):
 
     def measure_gestures(self):
         
-        if arduino.in_waiting>=1:
-            if arduino.read() == "\n":
-                index = 0
-                serial_finger_angles = [0,0,0,0,0]
-                while index <5: 
-                    serial_finger_angles[index] = int(arduino.read_until(expected = "\n"))
-                    arduino.reset_input_buffer()
-                    if self.lock2 == False:
-                        self.latency_total_start = time.time()
-                        self.lock2 == True
-                    index = index + 1
-                print serial_finger_angles
-                # if (serial_finger_angles[0]>=180 and serial_finger_angles[1]>=180 and serial_finger_angles[2]<=35 and serial_finger_angles[3]<=35 and serial_finger_angles[4]>=180):
-                #     self.latency_total_end = time.time()
-                #     self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
+        # if arduino.in_waiting>=1:
+        #     if arduino.read() == "\n":
+        #         index = 0
+        #         serial_finger_angles = [0,0,0,0,0]
+        #         while index <5: 
+        #             serial_finger_angles[index] = int(arduino.read_until(expected = "\n"))
+        #             arduino.reset_input_buffer()
+        #             if self.lock2 == False:
+        #                 self.latency_total_start = time.time()
+        #                 self.lock2 == True
+        #             index = index + 1
+        #         print serial_finger_angles
+        #         # if (serial_finger_angles[0]>=180 and serial_finger_angles[1]>=180 and serial_finger_angles[2]<=35 and serial_finger_angles[3]<=35 and serial_finger_angles[4]>=180):
+        #         #     self.latency_total_end = time.time()
+        #         #     self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
 
-                #     print "Pose 1 Achieved in " + str(self.latency_total) + " seconds. Change to pose 2"
+        #         #     print "Pose 1 Achieved in " + str(self.latency_total) + " seconds. Change to pose 2"
 
-                    # self.latency_total_start = time.time()
+        #             # self.latency_total_start = time.time()
+        
+        gesture_latencies = []
+        
+        # Add a new row of gesture latencies every time the gesture sequence is completed in the Arduino code
+        if arduino.read() == "\n":
+            self.number+=1
+            while arduino.in_waiting>=1:
+                gesture_latencies.append(arduino.read_until(expected = "\n",size=4))
+            total_latency = sum(gesture_latencies)
+            gesture_latencies.append(total_latency)
+            self.rows.append([gesture_latencies])
 
+        if keyboard.is_pressed("s"):
+                            
+                        fields = ["Gesture 1", "Gesture 2", "Gesture 3", "Gesture 4", "Gesture 5","Gesture 6", "Gesture 7", "Gesture 8", "Gesture 9", "Gesture 10"]
+
+                        # name of csv file 
+                        filename = "Gesture Latency Data.csv"
+                
+                        # writing to csv file 
+                        with open(filename, 'wb') as csvfile: 
+                            # creating a csv writer object 
+                            csvwriter = csv.writer(csvfile) 
+                                
+                            # writing the fields 
+                            csvwriter.writerow(fields) 
+                                
+                            # writing the data rows 
+                            csvwriter.writerows(self.rows)
+                        
+                        print "LATENCY DATA SAVED TO CSV FILE" 
         
     
     def on_frame(self, controller):
