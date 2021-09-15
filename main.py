@@ -256,14 +256,14 @@ class SampleListener(Leap.Listener):
             # arduino.write('\n')
                     
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>8b',int(0),self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
+            arduino.write(struct.pack('>8b',int(0),self.servo_angles[0]/3.5, self.servo_angles[1]/3, self.servo_angles[2]/3, self.servo_angles[3]/3, self.servo_angles[4]/3, self.roll/4, int(self.data_confidence*100)))
             # arduino.write(struct.pack('>7b',self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
                        # arduino.reset_output_buffer()
             # print arduino.out_waiting
 
             self.iterator = 0
 
-            # print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
+            print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
             
 def measure_latency(control_mode, lock = False):
 
