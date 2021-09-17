@@ -59,11 +59,11 @@ Servo servo_pinky;
 Servo servo_wrist;
 
 //define the flex sensor input pins
-int flex_5 = A5;
-int flex_4 = A4;
-int flex_3 = A3;
-int flex_2 = A2;
-int flex_1 = A1;
+int flex_5 = A4;
+int flex_4 = A3;
+int flex_3 = A2;
+int flex_2 = A1;
+int flex_1 = A0;
 
 //define variables for flex sensor values
 int flex_5_val;
@@ -713,11 +713,11 @@ void loop()
       Mode6();
       break;
     }
-    if (count >= 500)
-    {
-      count = 0;
-      ServoGestureChecker();
-    }
-    count++;
+//    if (count >= 500)
+//    {
+//      count = 0;
+//      ServoGestureChecker();
+//    }
+//    count++;
   }
 }
