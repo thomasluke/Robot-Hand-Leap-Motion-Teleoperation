@@ -87,8 +87,8 @@ int flex_1_val_interp;
 int count = 0;
 int count2 = 0;
 
-// Setup the I2C LCD display
-LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x27, 16, 2);
+// Setup the I2C //lcd display
+//LiquidCrystal_I2C //lcd = LiquidCrystal_I2C(0x27, 16, 2);
 
 void setup()
 {
@@ -105,12 +105,12 @@ void setup()
   servo_pinky.attach(10);
   servo_wrist.attach(11);
 
-  lcd.begin();
-  lcd.backlight();
+  //lcd.begin();
+  //lcd.backlight();
 
-  lcd.clear();
-  lcd.setCursor(0, 0);
-  lcd.print("Mode: -");
+  //lcd.clear();
+  //lcd.setCursor(0, 0);
+  //lcd.print("Mode: -");
 }
 
 void ModeSelection()
@@ -124,38 +124,38 @@ void ModeSelection()
     mode = mode_buffer[0];
     lock = true;
 
-    lcd.setCursor(6, 0);
-    lcd.print("          ");
+    //lcd.setCursor(6, 0);
+    //lcd.print("          ");
 
     switch (mode)
     {
     case 1:
-      lcd.setCursor(6, 0);
-      lcd.print("Auto");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Auto");
       break;
     case 2:
-      lcd.setCursor(6, 0);
-      lcd.print("Leap");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Leap");
       break;
     case 3:
-      lcd.setCursor(6, 0);
-      lcd.print("Glove");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Glove");
       break;
     case 4:
-      lcd.setCursor(6, 0);
-      lcd.print("Key");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Key");
       break;
     case 5:
-      lcd.setCursor(6, 0);
-      lcd.print("Combined 1");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Combined 1");
       break;
     case 6:
-      lcd.setCursor(6, 0);
-      lcd.print("Combined 2");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Combined 2");
       break;
     default:
-      lcd.setCursor(6, 0);
-      lcd.print("Error");
+      //lcd.setCursor(6, 0);
+      //lcd.print("Error");
       break;
     }
     Serial.flush();
@@ -190,10 +190,10 @@ void Mode2()
 
     //    LatencyMeasure();
   }
-  //  lcd.print("   ");
-  //  lcd.setCursor(11, 1);
-  //  // lcd.print("combined");
-  //  lcd.print(test);
+  //  //lcd.print("   ");
+  //  //lcd.setCursor(11, 1);
+  //  // //lcd.print("combined");
+  //  //lcd.print(test);
 }
 
 void Mode3()
@@ -213,7 +213,7 @@ void Mode3()
   flex_2_val = map(flex_2_val, 180, 350, 0, 180);
 
   flex_1_val = analogRead(flex_1);
-  flex_1_val = map(flex_1_val, 200, 450, 0, 180);
+  flex_1_val = map(flex_1_val, 200, 250, 0, 180);
 
   servo_thumb.write(flex_1_val);   //A1
   servo_pointer.write(flex_2_val); //A2
@@ -223,13 +223,13 @@ void Mode3()
 
   //  LatencyMeasure();
 
-  //  lcd.clear();
+  //  //lcd.clear();
   //
-  //  lcd.setCursor(0, 1);
-  //  //   lcd.print("                ");
-  //  //   lcd.setCursor(0, 1);
-  //  //  lcd.print("glovemode");
-  //  lcd.print(flex_3_val);
+  //  //lcd.setCursor(0, 1);
+  //  //   //lcd.print("                ");
+  //  //   //lcd.setCursor(0, 1);
+  //  //  //lcd.print("glovemode");
+  //  //lcd.print(flex_3_val);
 }
 
 void Mode4()
@@ -275,7 +275,7 @@ void Mode5()
   flex_2_val = map(flex_2_val, 180, 350, 0, 180);
 
   flex_1_val = analogRead(flex_1);
-  flex_1_val = map(flex_1_val, 200, 450, 0, 180);
+  flex_1_val = map(flex_1_val, 200, 250, 0, 180);
 
   //    if (Serial.read() == '\n' && lock == true)
   if (Serial.read() == 0 && lock == true)
@@ -296,10 +296,10 @@ void Mode5()
 
     leap_data_confidence = (double(buffer[6]) / 100);
 
-    lcd.print("   ");
-    lcd.setCursor(11, 1);
-    // lcd.print("combined");
-    lcd.print(leap_data_confidence);
+    //lcd.print("   ");
+    //lcd.setCursor(11, 1);
+    // //lcd.print("combined");
+    //lcd.print(leap_data_confidence);
 
     glove_data_weight = 2 - leap_data_confidence;
 
@@ -311,15 +311,15 @@ void Mode5()
     servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight);
     // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
-    lcd.print("   ");
-    lcd.setCursor(7, 1);
-    // lcd.print("combined");
-    lcd.print(servo_middle_angle);
+    //lcd.print("   ");
+    //lcd.setCursor(7, 1);
+    // //lcd.print("combined");
+    //lcd.print(servo_middle_angle);
 
-    lcd.print("  ");
-    lcd.setCursor(1, 1);
-    // lcd.print("combined");
-    lcd.print(flex_3_val);
+    //lcd.print("  ");
+    //lcd.setCursor(1, 1);
+    // //lcd.print("combined");
+    //lcd.print(flex_3_val);
   }
 
   // Rotate servo motors to the angles received through serial from Python
@@ -362,10 +362,10 @@ void Mode6()
 
     leap_data_confidence = (double(buffer[6]) / 100);
 
-    lcd.print("   ");
-    lcd.setCursor(11, 1);
-    // lcd.print("combined");
-    lcd.print(leap_data_confidence);
+    //lcd.print("   ");
+    //lcd.setCursor(11, 1);
+    // //lcd.print("combined");
+    //lcd.print(leap_data_confidence);
 
     glove_data_weight = 2 - leap_data_confidence;
 
@@ -373,7 +373,7 @@ void Mode6()
     flex_4_val_serial = map(flex_4_val, 200, 450, 0, 180);
     flex_3_val_serial = map(flex_3_val, 200, 450, 0, 180);
     flex_2_val_serial = map(flex_2_val, 180, 350, 0, 180);
-    flex_1_val_serial = map(flex_1_val, 200, 450, 0, 180);
+    flex_1_val_serial = map(flex_1_val, 200, 250, 0, 180);
 
     // Weighted average combining Leap Motion Controller and Glove Control data
     servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight);
@@ -392,15 +392,15 @@ void Mode6()
     //    servo_wrist.write(servo_wrist_angle);
 
     count = 0;
-    lcd.print("   ");
-    lcd.setCursor(7, 1);
-    // lcd.print("combined");
-    lcd.print(servo_middle_angle);
+    //lcd.print("   ");
+    //lcd.setCursor(7, 1);
+    // //lcd.print("combined");
+    //lcd.print(servo_middle_angle);
 
-    //      lcd.print("  ");
-    //      lcd.setCursor(1, 1);
-    //      // lcd.print("combined");
-    //      lcd.print(servo_middle_angle);
+    //      //lcd.print("  ");
+    //      //lcd.setCursor(1, 1);
+    //      // //lcd.print("combined");
+    //      //lcd.print(servo_middle_angle);
   }
 
   else
@@ -410,7 +410,7 @@ void Mode6()
     flex_4_val_interp = map(flex_4_val, 200, 450, 0, 180);
     flex_3_val_interp = map(flex_3_val, 200, 450, 0, 180);
     flex_2_val_interp = map(flex_2_val, 180, 350, 0, 180);
-    flex_1_val_interp = map(flex_1_val, 200, 450, 0, 180);
+    flex_1_val_interp = map(flex_1_val, 200, 250, 0, 180);
 
     servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial)) * (double(servo_middle_angle_serial) / double(flex_3_val_serial)) * servo_middle_angle_serial;
 
@@ -445,10 +445,10 @@ void Mode6()
     }
     count++;
 
-    lcd.print("   ");
-    lcd.setCursor(1, 1);
-    // lcd.print("combined");
-    lcd.print(servo_middle_angle_interp);
+    //lcd.print("   ");
+    //lcd.setCursor(1, 1);
+    // //lcd.print("combined");
+    //lcd.print(servo_middle_angle_interp);
   }
 
   //  LatencyMeasure();
@@ -468,38 +468,38 @@ void ServoGestureChecker()
   // if (count >= 500)
   // {
   //   count = 0;
-  //   lcd.setCursor(0, 1);
-  //   lcd.print("                ");
-  //   lcd.setCursor(0, 1);
-  //   lcd.print(servo_angles[0]);
+  //   //lcd.setCursor(0, 1);
+  //   //lcd.print("                ");
+  //   //lcd.setCursor(0, 1);
+  //   //lcd.print(servo_angles[0]);
 
-  //   lcd.setCursor(3, 1);
-  //   lcd.print(servo_angles[1]);
+  //   //lcd.setCursor(3, 1);
+  //   //lcd.print(servo_angles[1]);
 
-  //   lcd.setCursor(6, 1);
-  //   lcd.print(servo_angles[2]);
+  //   //lcd.setCursor(6, 1);
+  //   //lcd.print(servo_angles[2]);
 
-  //   lcd.setCursor(9, 1);
-  //   lcd.print(servo_angles[3]);
+  //   //lcd.setCursor(9, 1);
+  //   //lcd.print(servo_angles[3]);
 
-  //   lcd.setCursor(12, 1);
-  //   lcd.print(servo_angles[4]);
+  //   //lcd.setCursor(12, 1);
+  //   //lcd.print(servo_angles[4]);
   // }
   // count++;
 
-  lcd.setCursor(0, 1);
-  lcd.print("                ");
-  lcd.setCursor(0, 1);
+  //lcd.setCursor(0, 1);
+  //lcd.print("                ");
+  //lcd.setCursor(0, 1);
 
   switch (gesture)
   {
   case 0:
 
-    lcd.print("Open Hand");
-    lcd.setCursor(10, 1);
-    lcd.print(gesture_latencies[gesture_increment - 1]);
-    //    lcd.setCursor(15, 1);
-    //    lcd.print("ms");
+    //lcd.print("Open Hand");
+    //lcd.setCursor(10, 1);
+    //lcd.print(gesture_latencies[gesture_increment - 1]);
+    //    //lcd.setCursor(15, 1);
+    //    //lcd.print("ms");
 
     // Closed fist reset for next gesture
     if (servo_angles[0] <= 60 && servo_angles[1] <= 60 && servo_angles[2] <= 60 && servo_angles[3] <= 60 && servo_angles[4] <= 60)
@@ -517,7 +517,7 @@ void ServoGestureChecker()
     break;
   case 1:
 
-    lcd.print("Fist");
+    //lcd.print("Fist");
 
     // Closed fist
     if (servo_angles[0] >= 160 && servo_angles[1] >= 160 && servo_angles[2] >= 160 && servo_angles[3] >= 160 && servo_angles[4] >= 160)
@@ -530,7 +530,7 @@ void ServoGestureChecker()
 
   case 2:
 
-    lcd.print("Thumb");
+    //lcd.print("Thumb");
 
     // Point thumb
     if (servo_angles[0] >= 160 && servo_angles[1] <= 60 && servo_angles[2] <= 60 && servo_angles[3] <= 60 && servo_angles[4] <= 60)
@@ -543,7 +543,7 @@ void ServoGestureChecker()
 
   case 3:
 
-    lcd.print("Pointer");
+    //lcd.print("Pointer");
 
     // Point Pointer finger
     if (servo_angles[0] <= 100 && servo_angles[1] >= 160 && servo_angles[2] <= 60 && servo_angles[3] <= 60 && servo_angles[4] <= 60)
@@ -556,7 +556,7 @@ void ServoGestureChecker()
 
   case 4:
 
-    lcd.print("Middle");
+    //lcd.print("Middle");
 
     // Point Middle finger
     if (servo_angles[0] <= 100 && servo_angles[1] <= 60 && servo_angles[2] >= 160 && servo_angles[3] <= 60 && servo_angles[4] <= 60)
@@ -569,7 +569,7 @@ void ServoGestureChecker()
 
   case 5:
 
-    lcd.print("Ring");
+    //lcd.print("Ring");
 
     // Point Ring finger
     if (servo_angles[0] <= 100 && servo_angles[1] <= 60 && servo_angles[2] <= 60 && servo_angles[3] >= 160 && servo_angles[4] <= 60)
@@ -581,7 +581,7 @@ void ServoGestureChecker()
     break;
   case 6:
 
-    lcd.print("R, P");
+    //lcd.print("R, P");
 
     // Point Pinky finger
     if (servo_angles[0] <= 100 && servo_angles[1] <= 60 && servo_angles[2] <= 60 && servo_angles[3] >= 160 && servo_angles[4] >= 160)
@@ -593,7 +593,7 @@ void ServoGestureChecker()
     break;
     //  case 7:
     //
-    //    lcd.print("po and m");
+    //    //lcd.print("po and m");
     //
     //    // Point Pointer and Middle finger
     //    if (servo_angles[0] >=160 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] >=160 && servo_angles[4] >=160)
@@ -605,7 +605,7 @@ void ServoGestureChecker()
     //    break;
     //  case 8:
     //
-    //    lcd.print("po, m & r");
+    //    //lcd.print("po, m & r");
     //
     //    // Point Pointer, Middle and Ring finger
     //    if (servo_angles[0] >=160 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] <= 20 && servo_angles[4] >=160)
@@ -617,7 +617,7 @@ void ServoGestureChecker()
     //    break;
     //  case 9:
     //
-    //    lcd.print("po, m, r and pi");
+    //    //lcd.print("po, m, r and pi");
     //
     //    // Point Pointer, Middle, Ring and Pinky finger
     //    if (servo_angles[0] >=160 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] <= 20 && servo_angles[4] <= 20)
@@ -629,7 +629,7 @@ void ServoGestureChecker()
     //    break;
     //  case 10:
     //
-    //    lcd.print("t, po, m, r and pi");
+    //    //lcd.print("t, po, m, r and pi");
     //
     //    // Point Thumb, Pointer, Middle, Ring and Pinky finger
     //    if (servo_angles[0] <= 170 && servo_angles[1] <= 20 && servo_angles[2] <= 20 && servo_angles[3] <= 20 && servo_angles[4] <= 20)
@@ -669,6 +669,23 @@ void ServoGestureChecker()
   //
   //    Serial.print(servo_wrist.read());
   //      Serial.print(' ');
+}
+
+void FingerAngles()
+{
+
+  servo_angles[0] = servo_thumb.read();
+  servo_angles[1] = servo_pointer.read();
+  servo_angles[2] = servo_middle.read();
+  servo_angles[3] = servo_ring.read();
+  servo_angles[4] = servo_pinky.read();
+
+  Serial.print('\n');
+  for (int i = 0; i < 5; i++)
+  {
+    Serial.println(int(servo_angles[i]));
+    // Serial.print('\n');
+  }
 }
 
 void LatencyMeasure()
@@ -713,11 +730,12 @@ void loop()
       Mode6();
       break;
     }
-//    if (count >= 500)
-//    {
-//      count = 0;
-//      ServoGestureChecker();
-//    }
-//    count++;
+       if (count >= 500)
+       {
+         count = 0;
+        //  ServoGestureChecker();
+         FingerAngles();
+       }
+       count++;
   }
 }

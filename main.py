@@ -90,7 +90,9 @@ class SampleListener(Leap.Listener):
     def run(self):
         # threading.Thread(target = main, args=(self,)).start()
         # threading.Thread(target = self.measure_latency).start()
-        threading.Thread(target = self.measure_gestures).start()
+        # threading.Thread(target = self.measure_gestures).start()
+        threading.Thread(target = self.MeasureAngles).start()
+
     
     def measure_latency(self):
 
@@ -186,7 +188,49 @@ class SampleListener(Leap.Listener):
                             csvwriter.writerows(self.rows)
                         
                         print "LATENCY DATA SAVED TO CSV FILE" 
-        
+    
+    def MeasureAngles(self):
+
+        while True:
+            count = 0
+            finger_angles = []
+            # print finger_angles
+            if (arduino.inWaiting() > 0):
+                if arduino.read() == "\n":
+                    while count < 5:
+                        try:
+                            # This will make it an integer, if the string is not an integer it will throw an error
+                            finger_angles.append(int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))) 
+                        except ValueError: # this deals will the error
+                            pass # if we don't change the value of myData it stays a string                
+                                # time.sleep(0.002)
+                        count += 1
+                # self.number+=1
+                # line = arduino.readline().strip()
+                # finger_angles = line.decode('ascii').split(',')
+                # finger_angles.append(list(arduino.read(1)))
+                self.rows.append(finger_angles)
+                print finger_angles
+
+            if keyboard.is_pressed("s"):
+                                
+                            fields = ["Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+
+                            # name of csv file 
+                            filename = "Measure Angle Data.csv"
+                    
+                            # writing to csv file 
+                            with open(filename, 'wb') as csvfile: 
+                                # creating a csv writer object 
+                                csvwriter = csv.writer(csvfile) 
+                                    
+                                # writing the fields 
+                                csvwriter.writerow(fields) 
+                                    
+                                # writing the data rows 
+                                csvwriter.writerows(self.rows)
+                            
+                            print "LATENCY DATA SAVED TO CSV FILE"       
     
     def on_frame(self, controller):
         time.sleep(0.003)
@@ -263,7 +307,7 @@ class SampleListener(Leap.Listener):
 
             self.iterator = 0
 
-            print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
+            # print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
             
 def measure_latency(control_mode, lock = False):
 
