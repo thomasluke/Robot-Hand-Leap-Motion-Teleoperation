@@ -7,7 +7,7 @@ int data;
 int data2;
 int data3;
 int mode;
-char buffer[8];
+char buffer[7];
 char buffer1[2];
 char mode_buffer[2];
 int servo_angles[5];
@@ -173,12 +173,12 @@ void Mode2()
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle = buffer[0] * 4;
-    servo_pointer_angle = buffer[1] * 4;
-    servo_middle_angle = buffer[2] * 4;
-    servo_ring_angle = buffer[3] * 4;
-    servo_pinky_angle = buffer[4] * 4;
-    servo_wrist_angle = buffer[5] * 4;
+    servo_thumb_angle = buffer[0] + 127;
+    servo_pointer_angle = buffer[1] + 127;
+    servo_middle_angle = buffer[2] + 127;
+    servo_ring_angle = buffer[3] + 127;
+    servo_pinky_angle = buffer[4] + 127;
+    //servo_wrist_angle = buffer[5] + 127;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
@@ -186,9 +186,9 @@ void Mode2()
     servo_middle.write(servo_middle_angle);
     servo_ring.write(servo_ring_angle);
     servo_pinky.write(servo_pinky_angle);
-    servo_wrist.write(servo_wrist_angle);
+    //servo_wrist.write(servo_wrist_angle);
 
-    //    LatencyMeasure();
+        LatencyMeasure();
   }
   //  //lcd.print("   ");
   //  //lcd.setCursor(11, 1);
@@ -221,7 +221,7 @@ void Mode3()
   servo_ring.write(flex_4_val);    //A4
   servo_pinky.write(flex_5_val);   //A5
 
-  //  LatencyMeasure();
+//    LatencyMeasure();
 
   //  //lcd.clear();
   //
@@ -240,12 +240,12 @@ void Mode4()
   data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
   // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-  servo_thumb_angle = buffer[0] * 4;
-  servo_pointer_angle = buffer[1] * 4;
-  servo_middle_angle = buffer[2] * 4;
-  servo_ring_angle = buffer[3] * 4;
-  servo_pinky_angle = buffer[4] * 4;
-  servo_wrist_angle = buffer[5] * 4;
+  servo_thumb_angle = buffer[0] + 127;
+  servo_pointer_angle = buffer[1] + 127;
+  servo_middle_angle = buffer[2] + 127;
+  servo_ring_angle = buffer[3] + 127;
+  servo_pinky_angle = buffer[4] + 127;
+  //servo_wrist_angle = buffer[5] + 127;
 
   // Rotate servo motors to the angles received through serial from Python
   servo_thumb.write(servo_thumb_angle);
@@ -253,9 +253,9 @@ void Mode4()
   servo_middle.write(servo_middle_angle);
   servo_ring.write(servo_ring_angle);
   servo_pinky.write(servo_pinky_angle);
-  servo_wrist.write(servo_wrist_angle);
+  //servo_wrist.write(servo_wrist_angle);
 
-  //  LatencyMeasure();
+    LatencyMeasure();
 }
 
 void Mode5()
@@ -287,14 +287,14 @@ void Mode5()
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle_serial = buffer[0] * 4;
-    servo_pointer_angle_serial = buffer[1] * 4;
-    servo_middle_angle_serial = buffer[2] * 4;
-    servo_ring_angle_serial = buffer[3] * 4;
-    servo_pinky_angle_serial = buffer[4] * 4;
-    servo_wrist_angle_serial = buffer[5] * 4;
+    servo_thumb_angle_serial = buffer[0] + 127;
+    servo_pointer_angle_serial = buffer[1] + 127;
+    servo_middle_angle_serial = buffer[2] + 127;
+    servo_ring_angle_serial = buffer[3] + 127;
+    servo_pinky_angle_serial = buffer[4] + 127;
+    //servo_wrist_angle_serial = buffer[5] + 127;
 
-    leap_data_confidence = (double(buffer[6]) / 100);
+    leap_data_confidence = (double(buffer[5]) / 100);
 
     //lcd.print("   ");
     //lcd.setCursor(11, 1);
@@ -328,9 +328,9 @@ void Mode5()
   servo_middle.write(servo_middle_angle);
   servo_ring.write(servo_ring_angle);
   servo_pinky.write(servo_pinky_angle);
-  servo_wrist.write(servo_wrist_angle);
+  //servo_wrist.write(servo_wrist_angle);
 
-  //  LatencyMeasure();
+    LatencyMeasure();
 }
 
 void Mode6()
@@ -353,14 +353,14 @@ void Mode6()
     data = Serial.readBytesUntil('\n', buffer, sizeof(buffer) - 1);
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
-    servo_thumb_angle_serial = buffer[0] * 4;
-    servo_pointer_angle_serial = buffer[1] * 4;
-    servo_middle_angle_serial = buffer[2] * 4;
-    servo_ring_angle_serial = buffer[3] * 4;
-    servo_pinky_angle_serial = buffer[4] * 4;
-    servo_wrist_angle_serial = buffer[5] * 4;
+    servo_thumb_angle_serial = buffer[0] + 127;
+    servo_pointer_angle_serial = buffer[1] + 127;
+    servo_middle_angle_serial = buffer[2] + 127;
+    servo_ring_angle_serial = buffer[3] + 127;
+    servo_pinky_angle_serial = buffer[4] + 127;
+    //servo_wrist_angle_serial = buffer[5] + 127;
 
-    leap_data_confidence = (double(buffer[6]) / 100);
+    leap_data_confidence = (double(buffer[5]) / 100);
 
     //lcd.print("   ");
     //lcd.setCursor(11, 1);
@@ -391,7 +391,7 @@ void Mode6()
     servo_pinky.write(servo_pinky_angle);
     //    servo_wrist.write(servo_wrist_angle);
 
-    count = 0;
+    count2 = 0;
     //lcd.print("   ");
     //lcd.setCursor(7, 1);
     // //lcd.print("combined");
@@ -427,7 +427,7 @@ void Mode6()
     servo_middle.write(servo_middle_angle_interp);
     servo_ring.write(servo_ring_angle_interp);
     servo_pinky.write(servo_pinky_angle_interp);
-    servo_wrist.write(servo_wrist_angle_interp);
+    //servo_wrist.write(servo_wrist_angle_interp);
 
     //      if (leap_data_confidence >= 0.1)
     //      {
@@ -439,11 +439,11 @@ void Mode6()
     //      }
 
     // Changes to 100% glove control mode if Leap Motion controller is not receiving hand tracking data
-    if (count >= 3000)
+    if (count2 >= 3000)
     {
       leap_data_confidence = 0;
     }
-    count++;
+    count2++;
 
     //lcd.print("   ");
     //lcd.setCursor(1, 1);
@@ -451,7 +451,7 @@ void Mode6()
     //lcd.print(servo_middle_angle_interp);
   }
 
-  //  LatencyMeasure();
+    LatencyMeasure();
 }
 
 void ServoGestureChecker()
@@ -693,14 +693,14 @@ void LatencyMeasure()
   CurrentTime = millis();
   ElapsedTime = CurrentTime - LocalStartTime;
   Serial.print('\n');
-  Serial.print(ElapsedTime);
+  Serial.println(int(ElapsedTime));
   SystemStartTime = millis();
 }
 
 void loop()
 {
 
-  //  LocalStartTime = millis();
+    LocalStartTime = millis();
 
   if (lock == false)
   {
@@ -730,7 +730,8 @@ void loop()
       Mode6();
       break;
     }
-       if (count >= 500)
+//    LatencyMeasure();
+       if (count >= 1000)
        {
          count = 0;
         //  ServoGestureChecker();

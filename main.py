@@ -89,33 +89,39 @@ class SampleListener(Leap.Listener):
 
     def run(self):
         # threading.Thread(target = main, args=(self,)).start()
-        # threading.Thread(target = self.measure_latency).start()
+        threading.Thread(target = self.measure_latency).start()
         # threading.Thread(target = self.measure_gestures).start()
-        threading.Thread(target = self.MeasureAngles).start()
+        # threading.Thread(target = self.MeasureAngles).start()
 
     
     def measure_latency(self):
 
             while True:
 
-                time.sleep(0.02)
+                # time.sleep(0.02)
 
-                if arduino.in_waiting>=1:
+                if (arduino.inWaiting() > 0):
                     if arduino.read() == "\n":
-                        self.latency_arduino = int(arduino.read_until(expected = "\n"))
+                        try:
+                            # This will make it an integer, if the string is not an integer it will throw an error
+                            self.latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r')) 
+                        except ValueError: # this deals will the error
+                            pass # if we don't change the value of myData it stays a string                
+                                # time.sleep(0.002)
                         arduino.reset_input_buffer()
 
-                    self.number+=1
 
-                    self.latency_total_end = time.time()
-                    self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
-                    self.latency_total_start = time.time()
+                        self.number+=1
 
-                    latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
-                    # print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+                        self.latency_total_end = time.time()
+                        self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
+                        self.latency_total_start = time.time()
 
-                    self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
-                
+                        latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
+                        print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+
+                        self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
+                    
                     if keyboard.is_pressed("s"):
                             
                         fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
@@ -209,8 +215,8 @@ class SampleListener(Leap.Listener):
                 # line = arduino.readline().strip()
                 # finger_angles = line.decode('ascii').split(',')
                 # finger_angles.append(list(arduino.read(1)))
-                self.rows.append(finger_angles)
-                print finger_angles
+                    self.rows.append(finger_angles)
+                    print finger_angles
 
             if keyboard.is_pressed("s"):
                                 
@@ -233,7 +239,7 @@ class SampleListener(Leap.Listener):
                             print "LATENCY DATA SAVED TO CSV FILE"       
     
     def on_frame(self, controller):
-        time.sleep(0.003)
+        # time.sleep(0.003)
         # Get the most recent frame and report some basic information
         frame = controller.frame()  # Frame sent from Leap Motion Controller to computer
 
@@ -277,7 +283,7 @@ class SampleListener(Leap.Listener):
                     # Calculating angle between finger and hand vectors ensures that hand orientation does not matter.
                     finger_flexion.append(angle_between(finger_vector, hand_normal_vector)) 
                     # Conversion factor finger flexion values to servo motor rotation angle.  
-                    self.servo_angles.append(int(abs((180*3)-(finger_flexion[index]*(180/0.6))))) 
+                    self.servo_angles.append(int(abs((180*3)-(finger_flexion[index]*(180/0.5))))) 
                 
                 # If the tracked finger is not a thumb then measure its flexion angle with respect to the hand/palm vector
                 else:
@@ -298,9 +304,10 @@ class SampleListener(Leap.Listener):
 
             # # Serial write newline character which to inidcate where to start reading bytes in the Arduino code
             # arduino.write('\n')
-                    
+                             
             # Serial write servo rotation angles in byte (binary) form to the Arduino code. Divide values sent to keep in the required byte range of -128<=value<=128. Values multiplied back in Arduino code. 
-            arduino.write(struct.pack('>8b',int(0),self.servo_angles[0]/3.5, self.servo_angles[1]/3, self.servo_angles[2]/3, self.servo_angles[3]/3, self.servo_angles[4]/3, self.roll/4, int(self.data_confidence*100)))
+            # arduino.write(struct.pack('>8b',int(0),self.servo_angles[0]-127, self.servo_angles[1]-127, self.servo_angles[2]-127, self.servo_angles[3]-127, self.servo_angles[4]-127, self.roll/4, int(self.data_confidence*100)))
+            arduino.write(struct.pack('>7b',int(0),self.servo_angles[0]-127, self.servo_angles[1]-127, self.servo_angles[2]-127, self.servo_angles[3]-127, self.servo_angles[4]-127, int(self.data_confidence*100)))
             # arduino.write(struct.pack('>7b',self.servo_angles[0]/4, self.servo_angles[1]/4, self.servo_angles[2]/4, self.servo_angles[3]/4, self.servo_angles[4]/4, self.roll/4, int(self.data_confidence*100)))
                        # arduino.reset_output_buffer()
             # print arduino.out_waiting
@@ -309,59 +316,111 @@ class SampleListener(Leap.Listener):
 
             # print "Finger Angles: " + str(self.servo_angles) + " Leap Data Confidence: " + str(int(self.data_confidence*100))
             
-def measure_latency(control_mode, lock = False):
-
-    if lock == False:
-        
-        number = 0
+def MeasureAngles(control_mode):
         rows = []
-        arduino_latency = 0
+        while True:
+            count = 0
+            finger_angles = []
+            # print finger_angles
+            if (arduino.inWaiting() > 0):
+                if arduino.read() == "\n":
+                    while count < 5:
+                        try:
+                            # This will make it an integer, if the string is not an integer it will throw an error
+                            finger_angles.append(int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))) 
+                        except ValueError: # this deals will the error
+                            pass # if we don't change the value of myData it stays a string                
+                                # time.sleep(0.002)
+                        count += 1
+                # self.number+=1
+                # line = arduino.readline().strip()
+                # finger_angles = line.decode('ascii').split(',')
+                # finger_angles.append(list(arduino.read(1)))
+                    rows.append(finger_angles)
+                    print finger_angles
 
-        total_latency_start = time.time()
+            if keyboard.is_pressed("s"):
+
+                            fields = ["Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+
+                            # name of csv file 
+                            filename = control_mode + "Measure Angle Data.csv"
+                    
+                            # writing to csv file 
+                            with open(filename, 'wb') as csvfile: 
+                                # creating a csv writer object 
+                                csvwriter = csv.writer(csvfile) 
+                                    
+                                # writing the fields 
+                                csvwriter.writerow(fields) 
+                                    
+                                # writing the data rows 
+                                csvwriter.writerows(rows)
+                            rows = []
+                            print "LATENCY DATA SAVED TO CSV FILE"       
+
+def measure_latency(control_mode, lock = False):
+    while True:
+        if lock == False:
+            
+            number = 0
+            rows = []
+            latency_arduino = 0
+
+            total_latency_start = time.time()
+            local_latency_start = time.time()
+
+            lock = True
+
+        # time.sleep(0.02)
+
+        local_latency_end = time.time()
+        local_latency = (local_latency_end - local_latency_start) * 1000
         local_latency_start = time.time()
 
-        lock = True
+        if (arduino.inWaiting() > 0):
+            if arduino.read() == "\n":
+                try:
+                    # This will make it an integer, if the string is not an integer it will throw an error
+                    latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r')) 
+                except ValueError: # this deals will the error
+                    pass # if we don't change the value of myData it stays a string                
+                        # time.sleep(0.002)
+                arduino.reset_input_buffer()
 
-    # while True:
-    local_latency_end = time.time()
-    local_latency = (local_latency_end - local_latency_start) * 1000
-    local_latency_start = time.time()
 
-    if arduino.in_waiting>=1:
-        if arduino.read() == "\n":
-            arduino_latency = int(arduino.read_until(expected = "\n"))
-            arduino.reset_input_buffer()
-    
-        number+=1
+                number+=1
 
-        total_latency_end = time.time()
-        total_latency = (total_latency_end - total_latency_start) * 1000
-        total_latency_start = time.time()
+                total_latency_end = time.time()
+                total_latency = (total_latency_end - total_latency_start) * 1000
+                total_latency_start = time.time()
 
-        serial_latency = total_latency - arduino_latency - local_latency
-        print(" Latency Arduino (ms): " + str(arduino_latency) +  " Latency Local (ms): " + str(local_latency) + " Latency Total (ms): " + str(total_latency) + " Latency Serial (ms): " + str(serial_latency))
+                serial_latency = total_latency - latency_arduino - local_latency
+                print(" Latency Arduino (ms): " + str(latency_arduino) +  " Latency Local (ms): " + str(local_latency) + " Latency Total (ms): " + str(total_latency) + " Latency Serial (ms): " + str(serial_latency))
 
-        rows.append([str(number),str(arduino_latency),str(local_latency),str(total_latency),str(serial_latency)])
-
-    if keyboard.is_pressed("s"):
+                rows.append([str(number),str(latency_arduino),str(local_latency),str(total_latency),str(serial_latency)])
             
-        fields = ["Number", "Latency Arduino", "Latency Local"]
+            if keyboard.is_pressed("s"):
+                    
+                fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
 
-        # name of csv file 
-        filename = control_mode + " Latency Data.csv"
-
-        # writing to csv file 
-        with open(filename, 'wb') as csvfile: 
-            # creating a csv writer object 
-            csvwriter = csv.writer(csvfile) 
-                
-            # writing the fields 
-            csvwriter.writerow(fields) 
-                
-            # writing the data rows 
-            csvwriter.writerows(rows)
+                # name of csv file 
+                filename = control_mode + " Latency Data.csv"
         
-        print "LATENCY DATA SAVED TO CSV FILE" 
+                # writing to csv file 
+                with open(filename, 'wb') as csvfile: 
+                    # creating a csv writer object 
+                    csvwriter = csv.writer(csvfile) 
+                        
+                    # writing the fields 
+                    csvwriter.writerow(fields) 
+                        
+                    # writing the data rows 
+                    csvwriter.writerows(rows)
+                
+                print "LATENCY DATA SAVED TO CSV FILE" 
+    
+    
 
 def main():
     
@@ -413,7 +472,9 @@ def main():
             # Remove the sample listener when done
             controller.remove_listener(listener)
     elif mode == "3":
-        print "test"
+        
+        MeasureAngles("Glove")
+        # measure_latency("Glove");
         # while True:
         #     measure_latency("Glove")
         # while True:
