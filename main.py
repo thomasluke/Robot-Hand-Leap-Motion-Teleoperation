@@ -89,9 +89,9 @@ class SampleListener(Leap.Listener):
 
     def run(self):
         # threading.Thread(target = main, args=(self,)).start()
-        threading.Thread(target = self.measure_latency).start()
+        # threading.Thread(target = self.measure_latency).start()
         # threading.Thread(target = self.measure_gestures).start()
-        # threading.Thread(target = self.MeasureAngles).start()
+        threading.Thread(target = self.MeasureAngles).start()
 
     
     def measure_latency(self):
