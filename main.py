@@ -61,6 +61,8 @@ class SampleListener(Leap.Listener):
         self.latency_total_end = time.time()
         self.latency_total = 0.0
 
+        self.global_time_start = time.time()
+
         self.iterator = 0.1
         self.rows = []
         self.number = 0
@@ -215,12 +217,13 @@ class SampleListener(Leap.Listener):
                 # line = arduino.readline().strip()
                 # finger_angles = line.decode('ascii').split(',')
                 # finger_angles.append(list(arduino.read(1)))
-                    self.rows.append(finger_angles)
+                    current_time = time.time() - self.global_time_start
+                    self.rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
                     print finger_angles
 
             if keyboard.is_pressed("s"):
                                 
-                            fields = ["Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+                            fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
 
                             # name of csv file 
                             filename = "Measure Angle Data.csv"
@@ -318,6 +321,7 @@ class SampleListener(Leap.Listener):
             
 def MeasureAngles(control_mode):
         rows = []
+        global_time_start = time.time()
         while True:
             count = 0
             finger_angles = []
@@ -336,15 +340,16 @@ def MeasureAngles(control_mode):
                 # line = arduino.readline().strip()
                 # finger_angles = line.decode('ascii').split(',')
                 # finger_angles.append(list(arduino.read(1)))
-                    rows.append(finger_angles)
+                    current_time = time.time() - global_time_start
+                    rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
                     print finger_angles
 
             if keyboard.is_pressed("s"):
-
-                            fields = ["Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+                                
+                            fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
 
                             # name of csv file 
-                            filename = control_mode + "Measure Angle Data.csv"
+                            filename = control_mode + " Measure Angle Data.csv"
                     
                             # writing to csv file 
                             with open(filename, 'wb') as csvfile: 
@@ -356,7 +361,7 @@ def MeasureAngles(control_mode):
                                     
                                 # writing the data rows 
                                 csvwriter.writerows(rows)
-                            rows = []
+                            
                             print "LATENCY DATA SAVED TO CSV FILE"       
 
 def measure_latency(control_mode, lock = False):
