@@ -91,9 +91,9 @@ class SampleListener(Leap.Listener):
 
     def run(self):
         # threading.Thread(target = main, args=(self,)).start()
-        # threading.Thread(target = self.measure_latency).start()
+        threading.Thread(target = self.measure_latency).start()
         # threading.Thread(target = self.measure_gestures).start()
-        threading.Thread(target = self.MeasureAngles).start()
+        # threading.Thread(target = self.MeasureAngles).start()
 
     
     def measure_latency(self):
@@ -198,7 +198,7 @@ class SampleListener(Leap.Listener):
                         print "LATENCY DATA SAVED TO CSV FILE" 
     
     def MeasureAngles(self):
-
+        
         while True:
             count = 0
             finger_angles = []
@@ -478,8 +478,8 @@ def main():
             controller.remove_listener(listener)
     elif mode == "3":
         
-        MeasureAngles("Glove")
-        # measure_latency("Glove");
+        # MeasureAngles("Glove")
+        measure_latency("Glove");
         # while True:
         #     measure_latency("Glove")
         # while True:
