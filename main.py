@@ -97,36 +97,45 @@ class SampleListener(Leap.Listener):
 
     
     def measure_latency(self):
+            # interp_arduino_latency = []
 
             while True:
-
+                count = 0
                 # time.sleep(0.02)
 
                 if (arduino.inWaiting() > 0):
                     if arduino.read() == "\n":
                         try:
-                            # This will make it an integer, if the string is not an integer it will throw an error
-                            self.latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r')) 
-                        except ValueError: # this deals will the error
+                            self.latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))
+                            # average_interp_arduino_latency = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))                     
+                        except ValueError: # this deals with the error
                             pass # if we don't change the value of myData it stays a string                
                                 # time.sleep(0.002)
                         arduino.reset_input_buffer()
-
-
+                        count+=1
+                        
                         self.number+=1
+
+                        # self.latency_arduino = array[0]/array[1]
 
                         self.latency_total_end = time.time()
                         self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
                         self.latency_total_start = time.time()
 
                         latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
+
+                        # print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + "Latency Average Interp Arduino (ms): " + str(average_interp_arduino_latency) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+
+                        # self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(average_interp_arduino_latency),str(latency_serial),str(self.latency_total)])
+
                         print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
 
                         self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
-                    
+                        
                     if keyboard.is_pressed("s"):
                             
                         fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
+                        # fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Average Interp Arduino", "Latency Serial", "Latency Total"]
 
                         # name of csv file 
                         filename = "Latency Data.csv"
@@ -392,7 +401,6 @@ def measure_latency(control_mode, lock = False):
                     pass # if we don't change the value of myData it stays a string                
                         # time.sleep(0.002)
                 arduino.reset_input_buffer()
-
 
                 number+=1
 

@@ -22,6 +22,7 @@ unsigned long LocalStartTime = millis();
 unsigned long SystemStartTime = millis();
 unsigned long CurrentTime;
 unsigned long ElapsedTime;
+unsigned long ElapsedTime2 = 0;
 unsigned long StartTime = millis();
 
 int servo_thumb_angle;
@@ -189,7 +190,7 @@ void Mode2()
     servo_pinky.write(servo_pinky_angle);
     //servo_wrist.write(servo_wrist_angle);
 
-     LatencyMeasure();
+    LatencyMeasure();
   }
   //  //lcd.print("   ");
   //  //lcd.setCursor(11, 1);
@@ -222,7 +223,7 @@ void Mode3()
   servo_ring.write(flex_4_val);    //A4
   servo_pinky.write(flex_5_val);   //A5
 
- LatencyMeasure();
+  LatencyMeasure();
 
   //  //lcd.clear();
   //
@@ -278,7 +279,6 @@ void Mode5()
   flex_1_val = analogRead(flex_1);
   flex_1_val = map(flex_1_val, 190, 360, 0, 180);
 
-  
   //    if (Serial.read() == '\n' && lock == true)
   if (Serial.read() == 0 && lock == true)
 
@@ -306,11 +306,11 @@ void Mode5()
     glove_data_weight = 2 - leap_data_confidence;
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight)-40;
+    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight) - 40;
     // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
     //lcd.print("   ");
@@ -322,8 +322,7 @@ void Mode5()
     //lcd.setCursor(1, 1);
     // //lcd.print("combined");
     //lcd.print(flex_3_val);
-     LatencyMeasure();
-
+    LatencyMeasure();
   }
 
   // Rotate servo motors to the angles received through serial from Python
@@ -333,7 +332,6 @@ void Mode5()
   servo_ring.write(servo_ring_angle);
   servo_pinky.write(servo_pinky_angle);
   //servo_wrist.write(servo_wrist_angle);
-
 }
 
 void Mode6()
@@ -379,11 +377,11 @@ void Mode6()
     flex_1_val_serial = map(flex_1_val, 190, 360, 0, 180);
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_serial)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val_serial)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_serial)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_serial)) / (leap_data_confidence + glove_data_weight)-40;
+    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
     // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
     // Rotate servo motors to the angles received through serial from Python
@@ -394,7 +392,11 @@ void Mode6()
     servo_pinky.write(servo_pinky_angle);
     //    servo_wrist.write(servo_wrist_angle);
 
+    //    ElapsedTime2 = ElapsedTime2/count2;
+    LatencyMeasure();
     count2 = 0;
+    //    ElapsedTime2 = 0;
+
     //lcd.print("   ");
     //lcd.setCursor(7, 1);
     // //lcd.print("combined");
@@ -418,11 +420,11 @@ void Mode6()
     servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial)) * (double(servo_middle_angle_serial) / double(flex_3_val_serial)) * servo_middle_angle_serial;
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    servo_thumb_angle_interp = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_interp)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_pointer_angle_interp = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_interp)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_middle_angle_interp = ((leap_data_confidence * servo_middle_angle_interp) + (glove_data_weight * flex_3_val_interp)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_ring_angle_interp = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_interp)) / (leap_data_confidence + glove_data_weight)-40;
-    servo_pinky_angle_interp = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_interp)) / (leap_data_confidence + glove_data_weight)-40;
+    servo_thumb_angle_interp = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_pointer_angle_interp = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_middle_angle_interp = ((leap_data_confidence * servo_middle_angle_interp) + (glove_data_weight * flex_3_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_ring_angle_interp = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_pinky_angle_interp = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle_interp);
@@ -431,6 +433,8 @@ void Mode6()
     servo_ring.write(servo_ring_angle_interp);
     servo_pinky.write(servo_pinky_angle_interp);
     //servo_wrist.write(servo_wrist_angle_interp);
+
+    //    LatencyMeasure();
 
     //      if (leap_data_confidence >= 0.1)
     //      {
@@ -448,13 +452,16 @@ void Mode6()
     }
     count2++;
 
+    //    CurrentTime = millis();
+    //    ElapsedTime2 = CurrentTime - LocalStartTime + ElapsedTime2;
+
+    //    LatencyMeasure();
+
     //lcd.print("   ");
     //lcd.setCursor(1, 1);
     // //lcd.print("combined");
     //lcd.print(servo_middle_angle_interp);
   }
-
-  LatencyMeasure();
 }
 
 void ServoGestureChecker()
@@ -683,11 +690,11 @@ void FingerAngles()
   servo_angles[3] = servo_ring.read();
   servo_angles[4] = servo_pinky.read();
 
-//servo_angles[0] = analogRead(flex_1);
-//  servo_angles[1] = analogRead(flex_2);
-//  servo_angles[2] = analogRead(flex_3);
-//  servo_angles[3] = analogRead(flex_3);
-//  servo_angles[4] = analogRead(flex_4);
+  //servo_angles[0] = analogRead(flex_1);
+  //  servo_angles[1] = analogRead(flex_2);
+  //  servo_angles[2] = analogRead(flex_3);
+  //  servo_angles[3] = analogRead(flex_3);
+  //  servo_angles[4] = analogRead(flex_4);
 
   Serial.print('\n');
   for (int i = 0; i < 5; i++)
@@ -701,8 +708,10 @@ void LatencyMeasure()
 {
   CurrentTime = millis();
   ElapsedTime = CurrentTime - LocalStartTime;
+
   Serial.print('\n');
   Serial.println(int(ElapsedTime));
+  //  Serial.println(int(ElapsedTime2));
   SystemStartTime = millis();
 }
 
@@ -713,6 +722,7 @@ void loop()
 
   if (lock == false)
   {
+
     ModeSelection();
   }
   else if (lock == true)
@@ -739,17 +749,17 @@ void loop()
       Mode6();
       break;
     }
-//        LatencyMeasure();
-//    CurrentTime = millis();
-//  ElapsedTime = CurrentTime - StartTime;
-//  
-//    if (ElapsedTime >= 100)
-//    {
-//      StartTime = millis();
-//      
-//      //  ServoGestureChecker();
-//      FingerAngles();
-//    }
-//    count++;
+    //        LatencyMeasure();
+    //    CurrentTime = millis();
+    //  ElapsedTime = CurrentTime - StartTime;
+    //
+    //    if (ElapsedTime >= 100)
+    //    {
+    //      StartTime = millis();
+    //
+    //      //  ServoGestureChecker();
+    //      FingerAngles();
+    //    }
+    //    count++;
   }
 }
