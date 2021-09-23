@@ -190,7 +190,7 @@ void Mode2()
     servo_pinky.write(servo_pinky_angle);
     //servo_wrist.write(servo_wrist_angle);
 
-    LatencyMeasure();
+    // LatencyMeasure();
   }
   //  //lcd.print("   ");
   //  //lcd.setCursor(11, 1);
@@ -750,16 +750,16 @@ void loop()
       break;
     }
     //        LatencyMeasure();
-    //    CurrentTime = millis();
-    //  ElapsedTime = CurrentTime - StartTime;
-    //
-    //    if (ElapsedTime >= 100)
-    //    {
-    //      StartTime = millis();
-    //
-    //      //  ServoGestureChecker();
-    //      FingerAngles();
-    //    }
-    //    count++;
+       CurrentTime = millis();
+     ElapsedTime = CurrentTime - StartTime;
+    
+       if (ElapsedTime >= 100)
+       {
+         StartTime = millis();
+    
+         //  ServoGestureChecker();
+         FingerAngles();
+       }
+      //  count++;
   }
 }
