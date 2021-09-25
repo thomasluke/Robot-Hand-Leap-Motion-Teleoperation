@@ -1,0 +1,100 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
+{
+    "configurations": [
+        {
+            "name": "PlatformIO",
+            "includePath": [
+                "c:/Users/Tom Harrison/Desktop/Subject Folders/Google Sync/Capstone/Code/robot-hand-leap-motion-teleoperation/include",
+                "c:/Users/Tom Harrison/Desktop/Subject Folders/Google Sync/Capstone/Code/robot-hand-leap-motion-teleoperation/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Servo/src",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/cores/arduino",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/variants/standard",
+                "C:/Users/Tom Harrison/.platformio/lib/Firmata",
+                "C:/Users/Tom Harrison/.platformio/lib/Firmata/utility",
+                "C:/Users/Tom Harrison/.platformio/lib/Adafruit_Circuit_Playground",
+                "C:/Users/Tom Harrison/.platformio/lib/Adafruit_Circuit_Playground/utility",
+                "C:/Users/Tom Harrison/.platformio/lib/Bridge/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Esplora/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Ethernet/src",
+                "C:/Users/Tom Harrison/.platformio/lib/GSM/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Keyboard/src",
+                "C:/Users/Tom Harrison/.platformio/lib/LiquidCrystal/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Mouse/src",
+                "C:/Users/Tom Harrison/.platformio/lib/RobotIRremote/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Robot_Control/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Robot_Motor/src",
+                "C:/Users/Tom Harrison/.platformio/lib/SD/src",
+                "C:/Users/Tom Harrison/.platformio/lib/SpacebrewYun/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Stepper/src",
+                "C:/Users/Tom Harrison/.platformio/lib/TFT/src",
+                "C:/Users/Tom Harrison/.platformio/lib/Temboo/src",
+                "C:/Users/Tom Harrison/.platformio/lib/WiFi/src",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                "C:/Users/Tom Harrison/.platformio/packages/tool-unity",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "path": [
+                    "c:/Users/Tom Harrison/Desktop/Subject Folders/Google Sync/Capstone/Code/robot-hand-leap-motion-teleoperation/include",
+                    "c:/Users/Tom Harrison/Desktop/Subject Folders/Google Sync/Capstone/Code/robot-hand-leap-motion-teleoperation/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Servo/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/cores/arduino",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/variants/standard",
+                    "C:/Users/Tom Harrison/.platformio/lib/Firmata",
+                    "C:/Users/Tom Harrison/.platformio/lib/Firmata/utility",
+                    "C:/Users/Tom Harrison/.platformio/lib/Adafruit_Circuit_Playground",
+                    "C:/Users/Tom Harrison/.platformio/lib/Adafruit_Circuit_Playground/utility",
+                    "C:/Users/Tom Harrison/.platformio/lib/Bridge/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Esplora/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Ethernet/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/GSM/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Keyboard/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/LiquidCrystal/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Mouse/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/RobotIRremote/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Robot_Control/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Robot_Motor/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/SD/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/SpacebrewYun/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Stepper/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/TFT/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/Temboo/src",
+                    "C:/Users/Tom Harrison/.platformio/lib/WiFi/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/HID/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
+                    "C:/Users/Tom Harrison/.platformio/packages/tool-unity",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=50100",
+                "ARDUINO_AVR_UNO",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10808",
+                "__AVR_ATmega328P__",
+                ""
+            ],
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "C:/Users/Tom Harrison/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe",
+            "compilerArgs": [
+                "-mmcu=atmega328p",
+                ""
+            ]
+        }
+    ],
+    "version": 4
+}

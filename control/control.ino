@@ -265,19 +265,19 @@ void Mode5()
   // Combined Control Mode
 
   flex_5_val = analogRead(flex_5);
-  flex_5_val = map(flex_5_val, 215, 420, 0, 180);
+  flex_5_val = map(flex_5_val, 215, 420, 0, 150);
 
   flex_4_val = analogRead(flex_4);
-  flex_4_val = map(flex_4_val, 215, 410, 0, 180);
+  flex_4_val = map(flex_4_val, 215, 410, 0, 150);
 
   flex_3_val = analogRead(flex_3);
-  flex_3_val = map(flex_3_val, 215, 470, 0, 180);
+  flex_3_val = map(flex_3_val, 215, 470, 0, 150);
 
   flex_2_val = analogRead(flex_2);
-  flex_2_val = map(flex_2_val, 190, 390, 0, 180);
+  flex_2_val = map(flex_2_val, 190, 390, 0, 150);
 
   flex_1_val = analogRead(flex_1);
-  flex_1_val = map(flex_1_val, 190, 360, 0, 180);
+  flex_1_val = map(flex_1_val, 190, 360, 0, 150);
 
   //    if (Serial.read() == '\n' && lock == true)
   if (Serial.read() == 0 && lock == true)
@@ -290,10 +290,10 @@ void Mode5()
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle_serial = buffer[0] + 100;
-    servo_pointer_angle_serial = buffer[1] + 127;
-    servo_middle_angle_serial = buffer[2] + 127;
-    servo_ring_angle_serial = buffer[3] + 127;
-    servo_pinky_angle_serial = buffer[4] + 127;
+    servo_pointer_angle_serial = buffer[1] + 97;
+    servo_middle_angle_serial = buffer[2] + 97;
+    servo_ring_angle_serial = buffer[3] + 97;
+    servo_pinky_angle_serial = buffer[4] + 97;
     //servo_wrist_angle_serial = buffer[5] + 127;
 
     leap_data_confidence = (double(buffer[5]) / 100);
@@ -355,10 +355,10 @@ void Mode6()
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle_serial = servo_thumb_angle = buffer[0] + 100;
-    servo_pointer_angle_serial = buffer[1] + 127;
-    servo_middle_angle_serial = buffer[2] + 127;
-    servo_ring_angle_serial = buffer[3] + 127;
-    servo_pinky_angle_serial = buffer[4] + 127;
+    servo_pointer_angle_serial = buffer[1] + 97;
+    servo_middle_angle_serial = buffer[2] + 97;
+    servo_ring_angle_serial = buffer[3] + 97;
+    servo_pinky_angle_serial = buffer[4] + 97;
     //servo_wrist_angle_serial = buffer[5] + 127;
 
     leap_data_confidence = (double(buffer[5]) / 100);
@@ -370,11 +370,11 @@ void Mode6()
 
     glove_data_weight = 2 - leap_data_confidence;
 
-    flex_5_val_serial = map(flex_5_val, 215, 420, 0, 180);
-    flex_4_val_serial = map(flex_4_val, 215, 410, 0, 180);
-    flex_3_val_serial = map(flex_3_val, 215, 470, 0, 180);
-    flex_2_val_serial = map(flex_2_val, 190, 390, 0, 180);
-    flex_1_val_serial = map(flex_1_val, 190, 360, 0, 180);
+    flex_5_val_serial = map(flex_5_val, 215, 420, 0, 150);
+    flex_4_val_serial = map(flex_4_val, 215, 410, 0, 150);
+    flex_3_val_serial = map(flex_3_val, 215, 470, 0, 150);
+    flex_2_val_serial = map(flex_2_val, 190, 390, 0, 150);
+    flex_1_val_serial = map(flex_1_val, 190, 360, 0, 150);
 
     // Weighted average combining Leap Motion Controller and Glove Control data
     servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
@@ -411,11 +411,11 @@ void Mode6()
   else
   {
 
-    flex_5_val_interp = map(flex_5_val, 215, 420, 0, 180);
-    flex_4_val_interp = map(flex_4_val, 215, 410, 0, 180);
-    flex_3_val_interp = map(flex_3_val, 215, 470, 0, 180);
-    flex_2_val_interp = map(flex_2_val, 190, 390, 0, 180);
-    flex_1_val_interp = map(flex_1_val, 190, 360, 0, 180);
+    flex_5_val_interp = map(flex_5_val, 215, 420, 0, 150);
+    flex_4_val_interp = map(flex_4_val, 215, 410, 0, 150);
+    flex_3_val_interp = map(flex_3_val, 215, 470, 0, 150);
+    flex_2_val_interp = map(flex_2_val, 190, 390, 0, 150);
+    flex_1_val_interp = map(flex_1_val, 190, 360, 0, 150);
 
     servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial)) * (double(servo_middle_angle_serial) / double(flex_3_val_serial)) * servo_middle_angle_serial;
 
