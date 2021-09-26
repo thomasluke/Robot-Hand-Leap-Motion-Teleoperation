@@ -176,11 +176,11 @@ void Mode2()
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle = buffer[0] + 100;
-    servo_pointer_angle = buffer[1] + 90;
-    servo_middle_angle = buffer[2] + 90;
-    servo_ring_angle = buffer[3] + 90;
-    servo_pinky_angle = buffer[4] + 90;
-    //servo_wrist_angle = buffer[5] + 90;
+    servo_pointer_angle = buffer[1] + 127;
+    servo_middle_angle = buffer[2] + 127;
+    servo_ring_angle = buffer[3] + 127;
+    servo_pinky_angle = buffer[4] + 127;
+    //servo_wrist_angle = buffer[5] + 127;
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle);
@@ -203,19 +203,19 @@ void Mode3()
   // Glove Control Mode
 
   flex_5_val = analogRead(flex_5);
-  flex_5_val = map(flex_5_val, 215, 420, 0, 120);
+  flex_5_val = map(flex_5_val, 230, 480, 0, 180);
 
   flex_4_val = analogRead(flex_4);
-  flex_4_val = map(flex_4_val, 215, 410, 0, 120);
+  flex_4_val = map(flex_4_val, 230, 480, 0, 180);
 
   flex_3_val = analogRead(flex_3);
-  flex_3_val = map(flex_3_val, 215, 470, 0, 120);
+  flex_3_val = map(flex_3_val, 230, 530, 0, 180);
 
   flex_2_val = analogRead(flex_2);
-  flex_2_val = map(flex_2_val, 190, 390, 0, 120);
+  flex_2_val = map(flex_2_val, 230, 460, 0, 180);
 
   flex_1_val = analogRead(flex_1);
-  flex_1_val = map(flex_1_val, 190, 360, 0, 120);
+  flex_1_val = map(flex_1_val, 200, 380, 0, 180);
 
   servo_thumb.write(flex_1_val);   //A1
   servo_pointer.write(flex_2_val); //A2
@@ -265,19 +265,19 @@ void Mode5()
   // Combined Control Mode
 
   flex_5_val = analogRead(flex_5);
-  flex_5_val = map(flex_5_val, 215, 420, 0, 150);
+  flex_5_val = map(flex_5_val, 215, 420, 0, 180);
 
   flex_4_val = analogRead(flex_4);
-  flex_4_val = map(flex_4_val, 215, 410, 0, 150);
+  flex_4_val = map(flex_4_val, 215, 410, 0, 180);
 
   flex_3_val = analogRead(flex_3);
-  flex_3_val = map(flex_3_val, 215, 470, 0, 150);
+  flex_3_val = map(flex_3_val, 215, 470, 0, 180);
 
   flex_2_val = analogRead(flex_2);
-  flex_2_val = map(flex_2_val, 190, 390, 0, 150);
+  flex_2_val = map(flex_2_val, 190, 390, 0, 180);
 
   flex_1_val = analogRead(flex_1);
-  flex_1_val = map(flex_1_val, 190, 360, 0, 150);
+  flex_1_val = map(flex_1_val, 190, 360, 0, 180);
 
   //    if (Serial.read() == '\n' && lock == true)
   if (Serial.read() == 0 && lock == true)
@@ -290,10 +290,10 @@ void Mode5()
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle_serial = buffer[0] + 100;
-    servo_pointer_angle_serial = buffer[1] + 97;
-    servo_middle_angle_serial = buffer[2] + 97;
-    servo_ring_angle_serial = buffer[3] + 97;
-    servo_pinky_angle_serial = buffer[4] + 97;
+    servo_pointer_angle_serial = buffer[1] + 127;
+    servo_middle_angle_serial = buffer[2] + 127;
+    servo_ring_angle_serial = buffer[3] + 127;
+    servo_pinky_angle_serial = buffer[4] + 127;
     //servo_wrist_angle_serial = buffer[5] + 127;
 
     leap_data_confidence = (double(buffer[5]) / 100);
@@ -355,10 +355,10 @@ void Mode6()
 
     // Multiply back values received to which were divided in Python to keep them within the require byte range of -128<=value<=128.
     servo_thumb_angle_serial = servo_thumb_angle = buffer[0] + 100;
-    servo_pointer_angle_serial = buffer[1] + 97;
-    servo_middle_angle_serial = buffer[2] + 97;
-    servo_ring_angle_serial = buffer[3] + 97;
-    servo_pinky_angle_serial = buffer[4] + 97;
+    servo_pointer_angle_serial = buffer[1] + 127;
+    servo_middle_angle_serial = buffer[2] + 127;
+    servo_ring_angle_serial = buffer[3] + 127;
+    servo_pinky_angle_serial = buffer[4] + 127;
     //servo_wrist_angle_serial = buffer[5] + 127;
 
     leap_data_confidence = (double(buffer[5]) / 100);
@@ -370,11 +370,11 @@ void Mode6()
 
     glove_data_weight = 2 - leap_data_confidence;
 
-    flex_5_val_serial = map(flex_5_val, 215, 420, 0, 150);
-    flex_4_val_serial = map(flex_4_val, 215, 410, 0, 150);
-    flex_3_val_serial = map(flex_3_val, 215, 470, 0, 150);
-    flex_2_val_serial = map(flex_2_val, 190, 390, 0, 150);
-    flex_1_val_serial = map(flex_1_val, 190, 360, 0, 150);
+    flex_5_val_serial = map(flex_5_val, 215, 420, 0, 180);
+    flex_4_val_serial = map(flex_4_val, 215, 410, 0, 180);
+    flex_3_val_serial = map(flex_3_val, 215, 470, 0, 180);
+    flex_2_val_serial = map(flex_2_val, 190, 390, 0, 180);
+    flex_1_val_serial = map(flex_1_val, 190, 360, 0, 180);
 
     // Weighted average combining Leap Motion Controller and Glove Control data
     servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
@@ -411,11 +411,11 @@ void Mode6()
   else
   {
 
-    flex_5_val_interp = map(flex_5_val, 215, 420, 0, 150);
-    flex_4_val_interp = map(flex_4_val, 215, 410, 0, 150);
-    flex_3_val_interp = map(flex_3_val, 215, 470, 0, 150);
-    flex_2_val_interp = map(flex_2_val, 190, 390, 0, 150);
-    flex_1_val_interp = map(flex_1_val, 190, 360, 0, 150);
+    flex_5_val_interp = map(flex_5_val, 215, 420, 0, 180);
+    flex_4_val_interp = map(flex_4_val, 215, 410, 0, 180);
+    flex_3_val_interp = map(flex_3_val, 215, 470, 0, 180);
+    flex_2_val_interp = map(flex_2_val, 190, 390, 0, 180);
+    flex_1_val_interp = map(flex_1_val, 190, 360, 0, 180);
 
     servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial)) * (double(servo_middle_angle_serial) / double(flex_3_val_serial)) * servo_middle_angle_serial;
 
@@ -467,17 +467,17 @@ void Mode6()
 void FingerAngles()
 {
 
-  servo_angles[0] = servo_thumb.read();
-  servo_angles[1] = servo_pointer.read();
-  servo_angles[2] = servo_middle.read();
-  servo_angles[3] = servo_ring.read();
-  servo_angles[4] = servo_pinky.read();
+   servo_angles[0] = servo_thumb.read();
+   servo_angles[1] = servo_pointer.read();
+   servo_angles[2] = servo_middle.read();
+   servo_angles[3] = servo_ring.read();
+   servo_angles[4] = servo_pinky.read();
 
-  //servo_angles[0] = analogRead(flex_1);
-  //  servo_angles[1] = analogRead(flex_2);
-  //  servo_angles[2] = analogRead(flex_3);
-  //  servo_angles[3] = analogRead(flex_3);
-  //  servo_angles[4] = analogRead(flex_4);
+//  servo_angles[0] = analogRead(flex_1);
+//   servo_angles[1] = analogRead(flex_2);
+//   servo_angles[2] = analogRead(flex_3);
+//   servo_angles[3] = analogRead(flex_3);
+//   servo_angles[4] = analogRead(flex_4);
 
   Serial.print('\n');
   for (int i = 0; i < 5; i++)

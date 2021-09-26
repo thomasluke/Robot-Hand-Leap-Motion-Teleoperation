@@ -233,48 +233,48 @@ class SampleListener(Leap.Listener):
                 # finger_angles = line.decode('ascii').split(',')
                 # finger_angles.append(list(arduino.read(1)))
                     current_time = time.time() - self.global_time_start
-                    self.rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
+                    # self.rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
                     print finger_angles
                     
-                    # measure_gestures(self,finger_angles)
-            # if keyboard.is_pressed("s"):
-                                        
-            #         fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Open Hand", "Fist"]
-
-            #         # name of csv file 
-            #         filename = str("Gesture Latency Data.csv")
-
-            #         # writing to csv file 
-            #         with open(filename, 'wb') as csvfile: 
-            #             # creating a csv writer object 
-            #             csvwriter = csv.writer(csvfile) 
-                            
-            #             # writing the fields 
-            #             csvwriter.writerow(fields) 
-                            
-            #             # writing the data rows 
-            #             csvwriter.writerows(self.rows)
-        
-            #         print "LATENCY DATA SAVED TO CSV FILE"                   
+                    measure_gestures(self,finger_angles)
             if keyboard.is_pressed("s"):
-                                
-                            fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+                                        
+                    fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
 
-                            # name of csv file 
-                            filename = "Measure Angle Data.csv"
-                    
-                            # writing to csv file 
-                            with open(filename, 'wb') as csvfile: 
-                                # creating a csv writer object 
-                                csvwriter = csv.writer(csvfile) 
-                                    
-                                # writing the fields 
-                                csvwriter.writerow(fields) 
-                                    
-                                # writing the data rows 
-                                csvwriter.writerows(self.rows)
+                    # name of csv file 
+                    filename = str("Gesture Latency Data.csv")
+
+                    # writing to csv file 
+                    with open(filename, 'wb') as csvfile: 
+                        # creating a csv writer object 
+                        csvwriter = csv.writer(csvfile) 
                             
-                            print "LATENCY DATA SAVED TO CSV FILE"       
+                        # writing the fields 
+                        csvwriter.writerow(fields) 
+                            
+                        # writing the data rows 
+                        csvwriter.writerows(self.rows)
+        
+                    print "LATENCY DATA SAVED TO CSV FILE"                   
+            # if keyboard.is_pressed("s"):
+                                
+            #                 fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+
+            #                 # name of csv file 
+            #                 filename = "Measure Angle Data.csv"
+                    
+            #                 # writing to csv file 
+            #                 with open(filename, 'wb') as csvfile: 
+            #                     # creating a csv writer object 
+            #                     csvwriter = csv.writer(csvfile) 
+                                    
+            #                     # writing the fields 
+            #                     csvwriter.writerow(fields) 
+                                    
+            #                     # writing the data rows 
+            #                     csvwriter.writerows(self.rows)
+                            
+            #                 print "LATENCY DATA SAVED TO CSV FILE"       
     
     
     def on_frame(self, controller):
@@ -358,12 +358,12 @@ class SampleListener(Leap.Listener):
 def measure_gestures(self,finger_angles):
     
     close = 120
-    open = 40
-    poses = [[close,open,open,open,open],[open,close,open,open,open],[open,open,close,open,open],[open,open,open,close,close],[open,open,open,open,open],[close,close,close,close,close]]
+    open = 80
+    poses = [[close,open,open,open,open],[open,close,open,open,open],[open,open,close,open,open],[open,open,open,close,close],[close,close,close,close,close],[open,open,open,open,open]]
     latencies = []
     index = 0
     checker = True
-    pose_names = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Open Hand", "Fist"]
+    pose_names = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
 
     # pose = 0
     
@@ -552,7 +552,7 @@ def main():
 
             print "Invalid mode selected. Please type '1', '2', '3', '4', '5' or '6'"
 
-    if mode == "1" or mode == "2" or mode == "4" or mode == "5" or mode == "6":
+    if mode == "1" or mode == "2" or mode == "3" or mode == "4" or mode == "5" or mode == "6":
 
         # Create a sample listener and controller
         listener = SampleListener()
@@ -570,27 +570,27 @@ def main():
         finally:
             # Remove the sample listener when done
             controller.remove_listener(listener)
-    elif mode == "3":
+    # elif mode == "3":
         
-        MeasureAngles("Glove")
-        # measure_latency("Glove");
-        # while True:
-        #     measure_latency("Glove")
-        # while True:
-        #     # while True:
-        #     #     measure_latency("Glove")
-        #     # if arduino.in_waiting>=1:
-        #     if arduino.read() == "\n":
-        #         index = 0
-        #         serial_finger_angles = [0,0,0,0,0]
-        #         while index <5: 
-        #             serial_finger_angles[index] = (arduino.read_until(expected = " "))
-        #             # if self.lock2 == False:
-        #             #     self.latency_total_start = time.time()
-        #             #     self.lock2 == True
-        #             index = index + 1
-        #         print serial_finger_angles
-        #     arduino.reset_input_buffer()
+    #     MeasureAngles("Glove")
+    #     # measure_latency("Glove");
+    #     # while True:
+    #     #     measure_latency("Glove")
+    #     # while True:
+    #     #     # while True:
+    #     #     #     measure_latency("Glove")
+    #     #     # if arduino.in_waiting>=1:
+    #     #     if arduino.read() == "\n":
+    #     #         index = 0
+    #     #         serial_finger_angles = [0,0,0,0,0]
+    #     #         while index <5: 
+    #     #             serial_finger_angles[index] = (arduino.read_until(expected = " "))
+    #     #             # if self.lock2 == False:
+    #     #             #     self.latency_total_start = time.time()
+    #     #             #     self.lock2 == True
+    #     #             index = index + 1
+    #     #         print serial_finger_angles
+    #     #     arduino.reset_input_buffer()
 
             
     elif mode == "4":
