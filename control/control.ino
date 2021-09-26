@@ -265,19 +265,19 @@ void Mode5()
   // Combined Control Mode
 
   flex_5_val = analogRead(flex_5);
-  flex_5_val = map(flex_5_val, 215, 420, 0, 180);
+  flex_5_val = map(flex_5_val, 230, 480, 0, 180);
 
   flex_4_val = analogRead(flex_4);
-  flex_4_val = map(flex_4_val, 215, 410, 0, 180);
+  flex_4_val = map(flex_4_val, 230, 480, 0, 180);
 
   flex_3_val = analogRead(flex_3);
-  flex_3_val = map(flex_3_val, 215, 470, 0, 180);
+  flex_3_val = map(flex_3_val, 230, 530, 0, 180);
 
   flex_2_val = analogRead(flex_2);
-  flex_2_val = map(flex_2_val, 190, 390, 0, 180);
+  flex_2_val = map(flex_2_val, 230, 460, 0, 180);
 
   flex_1_val = analogRead(flex_1);
-  flex_1_val = map(flex_1_val, 190, 360, 0, 180);
+  flex_1_val = map(flex_1_val, 200, 380, 0, 180);
 
   //    if (Serial.read() == '\n' && lock == true)
   if (Serial.read() == 0 && lock == true)
@@ -306,11 +306,11 @@ void Mode5()
     glove_data_weight = 2 - leap_data_confidence;
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val)) / (leap_data_confidence + glove_data_weight);
+    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val)) / (leap_data_confidence + glove_data_weight);
+    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val)) / (leap_data_confidence + glove_data_weight);
+    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val)) / (leap_data_confidence + glove_data_weight);
+    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight);
     // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
     //lcd.print("   ");
@@ -370,18 +370,18 @@ void Mode6()
 
     glove_data_weight = 2 - leap_data_confidence;
 
-    flex_5_val_serial = map(flex_5_val, 215, 420, 0, 180);
-    flex_4_val_serial = map(flex_4_val, 215, 410, 0, 180);
-    flex_3_val_serial = map(flex_3_val, 215, 470, 0, 180);
-    flex_2_val_serial = map(flex_2_val, 190, 390, 0, 180);
-    flex_1_val_serial = map(flex_1_val, 190, 360, 0, 180);
+    flex_5_val_serial = map(flex_5_val, 230, 480, 0, 180);
+    flex_4_val_serial = map(flex_4_val, 230, 480, 0, 180);
+    flex_3_val_serial = map(flex_3_val, 230, 530, 0, 180);
+    flex_2_val_serial = map(flex_2_val, 230, 460, 0, 180);
+    flex_1_val_serial = map(flex_1_val, 200, 380, 0, 180);
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_serial)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_thumb_angle = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_serial)) / (leap_data_confidence + glove_data_weight);
+    servo_pointer_angle = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_serial)) / (leap_data_confidence + glove_data_weight);
+    servo_middle_angle = ((leap_data_confidence * servo_middle_angle_serial) + (glove_data_weight * flex_3_val_serial)) / (leap_data_confidence + glove_data_weight);
+    servo_ring_angle = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_serial)) / (leap_data_confidence + glove_data_weight);
+    servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_serial)) / (leap_data_confidence + glove_data_weight);
     // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
     // Rotate servo motors to the angles received through serial from Python
@@ -411,20 +411,20 @@ void Mode6()
   else
   {
 
-    flex_5_val_interp = map(flex_5_val, 215, 420, 0, 180);
-    flex_4_val_interp = map(flex_4_val, 215, 410, 0, 180);
-    flex_3_val_interp = map(flex_3_val, 215, 470, 0, 180);
-    flex_2_val_interp = map(flex_2_val, 190, 390, 0, 180);
-    flex_1_val_interp = map(flex_1_val, 190, 360, 0, 180);
+    flex_5_val_interp = map(flex_5_val, 230, 480, 0, 180);
+    flex_4_val_interp = map(flex_4_val, 230, 480, 0, 180);
+    flex_3_val_interp = map(flex_3_val, 230, 530, 0, 180);
+    flex_2_val_interp = map(flex_2_val, 230, 460, 0, 180);
+    flex_1_val_interp = map(flex_1_val, 200, 380, 0, 180);
 
     servo_middle_angle_interp = (double(flex_3_val_interp) / double(flex_3_val_serial)) * (double(servo_middle_angle_serial) / double(flex_3_val_serial)) * servo_middle_angle_serial;
 
     // Weighted average combining Leap Motion Controller and Glove Control data
-    servo_thumb_angle_interp = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_pointer_angle_interp = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_middle_angle_interp = ((leap_data_confidence * servo_middle_angle_interp) + (glove_data_weight * flex_3_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_ring_angle_interp = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
-    servo_pinky_angle_interp = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_interp)) / (leap_data_confidence + glove_data_weight) - 40;
+    servo_thumb_angle_interp = ((leap_data_confidence * servo_thumb_angle_serial) + (glove_data_weight * flex_1_val_interp)) / (leap_data_confidence + glove_data_weight);
+    servo_pointer_angle_interp = ((leap_data_confidence * servo_pointer_angle_serial) + (glove_data_weight * flex_2_val_interp)) / (leap_data_confidence + glove_data_weight);
+    servo_middle_angle_interp = ((leap_data_confidence * servo_middle_angle_interp) + (glove_data_weight * flex_3_val_interp)) / (leap_data_confidence + glove_data_weight);
+    servo_ring_angle_interp = ((leap_data_confidence * servo_ring_angle_serial) + (glove_data_weight * flex_4_val_interp)) / (leap_data_confidence + glove_data_weight);
+    servo_pinky_angle_interp = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val_interp)) / (leap_data_confidence + glove_data_weight);
 
     // Rotate servo motors to the angles received through serial from Python
     servo_thumb.write(servo_thumb_angle_interp);

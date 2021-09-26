@@ -445,110 +445,110 @@ def measure_gestures(self,finger_angles):
         
     #     print "LATENCY DATA SAVED TO CSV FILE"       
 
-def MeasureAngles(control_mode):
-        rows = []
-        global_time_start = time.time()
-        while True:
-            count = 0
-            finger_angles = []
-            # print finger_angles
-            if (arduino.inWaiting() > 0):
-                if arduino.read() == "\n":
-                    while count < 5:
-                        try:
-                            # This will make it an integer, if the string is not an integer it will throw an error
-                            finger_angles.append(int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))) 
-                        except ValueError: # this deals will the error
-                            pass # if we don't change the value of myData it stays a string                
-                                # time.sleep(0.002)
-                        count += 1
-                # self.number+=1
-                # line = arduino.readline().strip()
-                # finger_angles = line.decode('ascii').split(',')
-                # finger_angles.append(list(arduino.read(1)))
-                    current_time = time.time() - global_time_start
-                    rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
-                    print finger_angles
+# def MeasureAngles(control_mode):
+#         rows = []
+#         global_time_start = time.time()
+#         while True:
+#             count = 0
+#             finger_angles = []
+#             # print finger_angles
+#             if (arduino.inWaiting() > 0):
+#                 if arduino.read() == "\n":
+#                     while count < 5:
+#                         try:
+#                             # This will make it an integer, if the string is not an integer it will throw an error
+#                             finger_angles.append(int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))) 
+#                         except ValueError: # this deals will the error
+#                             pass # if we don't change the value of myData it stays a string                
+#                                 # time.sleep(0.002)
+#                         count += 1
+#                 # self.number+=1
+#                 # line = arduino.readline().strip()
+#                 # finger_angles = line.decode('ascii').split(',')
+#                 # finger_angles.append(list(arduino.read(1)))
+#                     current_time = time.time() - global_time_start
+#                     rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
+#                     print finger_angles
 
-            if keyboard.is_pressed("s"):
+#             if keyboard.is_pressed("s"):
                                 
-                            fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+#                             fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
 
-                            # name of csv file 
-                            filename = control_mode + " Measure Angle Data.csv"
+#                             # name of csv file 
+#                             filename = control_mode + " Measure Angle Data.csv"
                     
-                            # writing to csv file 
-                            with open(filename, 'wb') as csvfile: 
-                                # creating a csv writer object 
-                                csvwriter = csv.writer(csvfile) 
+#                             # writing to csv file 
+#                             with open(filename, 'wb') as csvfile: 
+#                                 # creating a csv writer object 
+#                                 csvwriter = csv.writer(csvfile) 
                                     
-                                # writing the fields 
-                                csvwriter.writerow(fields) 
+#                                 # writing the fields 
+#                                 csvwriter.writerow(fields) 
                                     
-                                # writing the data rows 
-                                csvwriter.writerows(rows)
+#                                 # writing the data rows 
+#                                 csvwriter.writerows(rows)
                             
-                            print "LATENCY DATA SAVED TO CSV FILE"       
+#                             print "LATENCY DATA SAVED TO CSV FILE"       
 
-def measure_latency(control_mode, lock = False):
-    while True:
-        if lock == False:
+# def measure_latency(control_mode, lock = False):
+#     while True:
+#         if lock == False:
             
-            number = 0
-            rows = []
-            latency_arduino = 0
+#             number = 0
+#             rows = []
+#             latency_arduino = 0
 
-            total_latency_start = time.time()
-            local_latency_start = time.time()
+#             total_latency_start = time.time()
+#             local_latency_start = time.time()
 
-            lock = True
+#             lock = True
 
-        # time.sleep(0.02)
+#         # time.sleep(0.02)
 
-        local_latency_end = time.time()
-        local_latency = (local_latency_end - local_latency_start) * 1000
-        local_latency_start = time.time()
+#         local_latency_end = time.time()
+#         local_latency = (local_latency_end - local_latency_start) * 1000
+#         local_latency_start = time.time()
 
-        if (arduino.inWaiting() > 0):
-            if arduino.read() == "\n":
-                try:
-                    # This will make it an integer, if the string is not an integer it will throw an error
-                    latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r')) 
-                except ValueError: # this deals will the error
-                    pass # if we don't change the value of myData it stays a string                
-                        # time.sleep(0.002)
-                arduino.reset_input_buffer()
+#         if (arduino.inWaiting() > 0):
+#             if arduino.read() == "\n":
+#                 try:
+#                     # This will make it an integer, if the string is not an integer it will throw an error
+#                     latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r')) 
+#                 except ValueError: # this deals will the error
+#                     pass # if we don't change the value of myData it stays a string                
+#                         # time.sleep(0.002)
+#                 arduino.reset_input_buffer()
 
-                number+=1
+#                 number+=1
 
-                total_latency_end = time.time()
-                total_latency = (total_latency_end - total_latency_start) * 1000
-                total_latency_start = time.time()
+#                 total_latency_end = time.time()
+#                 total_latency = (total_latency_end - total_latency_start) * 1000
+#                 total_latency_start = time.time()
 
-                serial_latency = total_latency - latency_arduino - local_latency
-                print(" Latency Arduino (ms): " + str(latency_arduino) +  " Latency Local (ms): " + str(local_latency) + " Latency Total (ms): " + str(total_latency) + " Latency Serial (ms): " + str(serial_latency))
+#                 serial_latency = total_latency - latency_arduino - local_latency
+#                 print(" Latency Arduino (ms): " + str(latency_arduino) +  " Latency Local (ms): " + str(local_latency) + " Latency Total (ms): " + str(total_latency) + " Latency Serial (ms): " + str(serial_latency))
 
-                rows.append([str(number),str(latency_arduino),str(local_latency),str(total_latency),str(serial_latency)])
+#                 rows.append([str(number),str(latency_arduino),str(local_latency),str(total_latency),str(serial_latency)])
             
-            if keyboard.is_pressed("s"):
+#             if keyboard.is_pressed("s"):
                     
-                fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
+#                 fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
 
-                # name of csv file 
-                filename = control_mode + " Latency Data.csv"
+#                 # name of csv file 
+#                 filename = control_mode + " Latency Data.csv"
         
-                # writing to csv file 
-                with open(filename, 'wb') as csvfile: 
-                    # creating a csv writer object 
-                    csvwriter = csv.writer(csvfile) 
+#                 # writing to csv file 
+#                 with open(filename, 'wb') as csvfile: 
+#                     # creating a csv writer object 
+#                     csvwriter = csv.writer(csvfile) 
                         
-                    # writing the fields 
-                    csvwriter.writerow(fields) 
+#                     # writing the fields 
+#                     csvwriter.writerow(fields) 
                         
-                    # writing the data rows 
-                    csvwriter.writerows(rows)
+#                     # writing the data rows 
+#                     csvwriter.writerows(rows)
                 
-                print "LATENCY DATA SAVED TO CSV FILE" 
+#                 print "LATENCY DATA SAVED TO CSV FILE" 
     
     
 
