@@ -19,6 +19,7 @@ import time
 import csv
 from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 from serial import SerialException
+import random
 
 arduino = serial.Serial('COM3', 9600, timeout=0.1)
 # self.servo_angles = []
@@ -74,10 +75,14 @@ class SampleListener(Leap.Listener):
         self.data_confidence = 0
         self.roll = 0
 
-        self.pose = 0
         self.start_time = time.time()
-        self.time_passed=[]
+        self.time_passed=[0,0,0,0,0]
         self.rows2 = []
+        self.close = 120
+        self.open = 80
+        self.poses = [[self.close,self.open,self.open,self.open,self.open],[self.open,self.close,self.open,self.open,self.open],[self.open,self.open,self.close,self.open,self.open],[self.open,self.open,self.open,self.close,self.close],[self.close,self.close,self.close,self.close,self.close],[self.open,self.open,self.open,self.open,self.open]]
+        self.indicies = []
+        self.pose = 0
 
     def on_connect(self, controller):
         print "Connected"
@@ -234,12 +239,13 @@ class SampleListener(Leap.Listener):
                 # finger_angles.append(list(arduino.read(1)))
                     current_time = time.time() - self.global_time_start
                     # self.rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
-                    print finger_angles
+                    # print finger_angles
                     
                     measure_gestures(self,finger_angles)
             if keyboard.is_pressed("s"):
                                         
-                    fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
+                    # fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
+                    fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist"]
 
                     # name of csv file 
                     filename = str("Gesture Latency Data.csv")
@@ -357,43 +363,68 @@ class SampleListener(Leap.Listener):
             
 def measure_gestures(self,finger_angles):
     
-    close = 120
-    open = 80
-    poses = [[close,open,open,open,open],[open,close,open,open,open],[open,open,close,open,open],[open,open,open,close,close],[close,close,close,close,close],[open,open,open,open,open]]
     latencies = []
     index = 0
     checker = True
     pose_names = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
 
     # pose = 0
-    
+
+    if len(self.indicies) < 1:
+            self.indicies = [0,1,2,3,4]
+            # self.pose=random.choice(self.indicies)
+            # self.indicies.remove(self.pose)
+            # print "Next Pose: " + str(pose_names[self.pose])
+
+            # print self.time_passed
+            self.rows.append(self.time_passed)
+            self.time_passed = [0,0,0,0,0]
+
     while index < 5:
-        finger_pose = poses[self.pose][index]
-        if   finger_pose == open:
-            if finger_angles[index]>open:
-                checker = False
-        elif finger_pose == close:
-            if finger_angles[index]<close:
-                checker = False
+            finger_pose = self.poses[self.pose][index]
+            if   finger_pose == self.open:
+                if finger_angles[index]>self.open:
+                    checker = False
+            elif finger_pose == self.close:
+                if finger_angles[index]<self.close:
+                    checker = False
 
-        index+=1
+            index+=1
 
+    if checker == True and self.pose == 5:
+            # latency = time.time()-self.start_time
+            # print str(pose_names[self.pose]) + " Latency: " + str(latency) 
+            
+            # self.time_passed.append(latency)
+            self.pose=random.choice(self.indicies)
+
+            # self.indicies.remove(self.pose)
+            print "Next Pose: " + str(pose_names[self.pose])
+
+            checker = False
+
+            self.start_time = time.time()
+    
     if checker == True:
             latency = time.time()-self.start_time
             print str(pose_names[self.pose]) + " Latency: " + str(latency) 
-            if self.pose<5:
-                print "Next Pose: " + str(pose_names[self.pose+1])
-            elif self.pose>=5:
-                print "Next Pose: " + str(pose_names[0])
-            self.time_passed.append(latency)
-            self.pose=self.pose+1
-            self.start_time = time.time()
+            self.time_passed[self.pose] = latency
+            
+            # self.pose=random.choice(self.indicies)
+            # self.indicies.remove(self.pose)
+            self.indicies.remove(self.pose)
+            self.pose = 5
+            print str(pose_names[self.pose]) + " For Next Pose"
 
-    if self.pose > 5:
-        self.pose = 0
-        self.rows.append(self.time_passed)
-        self.time_passed = []
+            # self.start_time = time.time()
+    
+    
 
+    
+    
+
+    
+    
     # if keyboard.is_pressed("s"):
                             
     #     fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Open Hand", "Fist"]
