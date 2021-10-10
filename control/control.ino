@@ -18,11 +18,11 @@ int gesture = 1;
 int gesture_increment = 1;
 int gesture_latencies[7];
 
-unsigned long LocalStartTime = millis();
-unsigned long SystemStartTime = millis();
+unsigned long StartTimeArduino = millis();
+unsigned long StartTimeTotal = millis();
 unsigned long CurrentTime;
-unsigned long ElapsedTime;
-unsigned long ElapsedTime2 = 0;
+unsigned long ElapsedTimeTotal;
+unsigned long ElapsedTimeArduino;
 unsigned long StartTime = millis();
 
 int servo_thumb_angle;
@@ -107,6 +107,8 @@ void setup()
   servo_pinky.attach(10);
   servo_wrist.attach(11);
 
+  StartTimeTotal = millis();
+
   //lcd.begin();
   //lcd.backlight();
 
@@ -190,7 +192,8 @@ void Mode2()
     servo_pinky.write(servo_pinky_angle);
     //servo_wrist.write(servo_wrist_angle);
 
-    // LatencyMeasure();
+    LatencyMeasure();
+    // Serial.flush();
   }
   //  //lcd.print("   ");
   //  //lcd.setCursor(11, 1);
@@ -223,7 +226,7 @@ void Mode3()
   servo_ring.write(flex_4_val);    //A4
   servo_pinky.write(flex_5_val);   //A5
 
-  // LatencyMeasure();
+  LatencyMeasure();
 
   //  //lcd.clear();
   //
@@ -313,6 +316,13 @@ void Mode5()
     servo_pinky_angle = ((leap_data_confidence * servo_pinky_angle_serial) + (glove_data_weight * flex_5_val)) / (leap_data_confidence + glove_data_weight);
     // servo_wrist_angle = ((leap_data_confidence*servo_wrist_angle)+(glove_data_weight*flex_2_val)/(servo_wrist_angle+flex_6_val));
 
+    // Rotate servo motors to the angles received through serial from Python
+    servo_thumb.write(servo_thumb_angle);
+    servo_pointer.write(servo_pointer_angle);
+    servo_middle.write(servo_middle_angle);
+    servo_ring.write(servo_ring_angle);
+    servo_pinky.write(servo_pinky_angle);
+    //servo_wrist.write(servo_wrist_angle);
     //lcd.print("   ");
     //lcd.setCursor(7, 1);
     // //lcd.print("combined");
@@ -322,16 +332,8 @@ void Mode5()
     //lcd.setCursor(1, 1);
     // //lcd.print("combined");
     //lcd.print(flex_3_val);
-    // LatencyMeasure();
+    LatencyMeasure();
   }
-
-  // Rotate servo motors to the angles received through serial from Python
-  servo_thumb.write(servo_thumb_angle);
-  servo_pointer.write(servo_pointer_angle);
-  servo_middle.write(servo_middle_angle);
-  servo_ring.write(servo_ring_angle);
-  servo_pinky.write(servo_pinky_angle);
-  //servo_wrist.write(servo_wrist_angle);
 }
 
 void Mode6()
@@ -394,6 +396,7 @@ void Mode6()
 
     //    ElapsedTime2 = ElapsedTime2/count2;
     LatencyMeasure();
+    //    Serial.flush();
     count2 = 0;
     //    ElapsedTime2 = 0;
 
@@ -457,7 +460,7 @@ void Mode6()
     count2++;
 
     //    CurrentTime = millis();
-    //    ElapsedTime2 = CurrentTime - LocalStartTime + ElapsedTime2;
+    //    ElapsedTime2 = CurrentTime - StartTimeArduino + ElapsedTime2;
 
     //    LatencyMeasure();
 
@@ -493,19 +496,25 @@ void FingerAngles()
 
 void LatencyMeasure()
 {
-  CurrentTime = millis();
-  ElapsedTime = CurrentTime - LocalStartTime;
+  CurrentTime = micros();
+  ElapsedTimeTotal = CurrentTime - StartTimeTotal;
+  ElapsedTimeArduino = CurrentTime - StartTimeArduino;
+  StartTimeTotal = micros();
 
-  Serial.print('\n');
-  Serial.println(int(ElapsedTime));
-  //  Serial.println(int(ElapsedTime2));
-  SystemStartTime = millis();
+  if (count >= 10)
+  {
+    Serial.print('\n');
+    Serial.println(int(ElapsedTimeTotal));
+    Serial.println(int(ElapsedTimeArduino));
+    count = 0;
+  }
+  count++;
 }
 
 void loop()
 {
 
-  LocalStartTime = millis();
+  StartTimeArduino = micros();
 
   if (lock == false)
   {
@@ -537,16 +546,16 @@ void loop()
       break;
     }
     //        LatencyMeasure();
-    // CurrentTime = millis();
-    // ElapsedTime = CurrentTime - StartTime;
-
-    // if (ElapsedTime >= 100)
-    // {
-    //   StartTime = millis();
-
-    //   //  ServoGestureChecker();
-    //   FingerAngles();
-    // }
+    //     CurrentTime = millis();
+    //     ElapsedTime = CurrentTime - StartTime;
+    //
+    //     if (ElapsedTime >= 100)
+    //     {
+    //       StartTime = millis();
+    //
+    //       //  ServoGestureChecker();
+    ////       FingerAngles();
+    //     }
     //  count++;
   }
 }

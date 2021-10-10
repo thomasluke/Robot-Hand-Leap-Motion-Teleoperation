@@ -117,35 +117,44 @@ class SampleListener(Leap.Listener):
                 if (arduino.inWaiting() > 0):
                     if arduino.read() == "\n":
                         try:
-                            self.latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))
+                            latency = [0,0]
+
+                            latency[0] = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))
+                            latency[1] = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))
+                            
+                            self.latency_arduino = float(min(latency))/1000
+                            self.latency_total = float(max(latency))/1000
+                            # self.latency_arduino = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))
                             # average_interp_arduino_latency = int(arduino.readline().decode("utf-8").strip('\n').strip('\r'))                     
                         except ValueError: # this deals with the error
                             pass # if we don't change the value of myData it stays a string                
                                 # time.sleep(0.002)
-                        arduino.reset_input_buffer()
+                        # arduino.reset_input_buffer()
                         count+=1
                         
                         self.number+=1
 
                         # self.latency_arduino = array[0]/array[1]
 
-                        self.latency_total_end = time.time()
-                        self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
-                        self.latency_total_start = time.time()
+                        # self.latency_total_end = time.time()
+                        # self.latency_total = (self.latency_total_end - self.latency_total_start) * 1000
+                        # self.latency_total_start = time.time()
+                        # print self.latency_total/10
 
-                        latency_serial = self.latency_total - self.latency_arduino - self.latency_leap
+                        latency_serial_leap = self.latency_total - self.latency_arduino
 
                         # print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + "Latency Average Interp Arduino (ms): " + str(average_interp_arduino_latency) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
 
                         # self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(average_interp_arduino_latency),str(latency_serial),str(self.latency_total)])
 
-                        print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+                        # print("Latency Leap (ms): " + str(self.latency_leap) + " Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial (ms): " + str(latency_serial) + " Latency total (ms): " + str(self.latency_total))
+                        print("Latency Arduino (ms): " + str(self.latency_arduino) + " Latency Serial and Leap (ms): " + str(latency_serial_leap) + " Latency total (ms): " + str(self.latency_total))
 
-                        self.rows.append([str(self.number),str(self.latency_leap),str(self.latency_arduino),str(latency_serial),str(self.latency_total)])
+                        self.rows.append([str(self.number),str(self.latency_arduino),str(latency_serial_leap),str(self.latency_total)])
                         
                     if keyboard.is_pressed("s"):
                             
-                        fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Serial", "Latency Total"]
+                        fields = ["Number", "Latency Arduino", "Latency Serial", "Latency Total"]
                         # fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Average Interp Arduino", "Latency Serial", "Latency Total"]
 
                         # name of csv file 
@@ -368,15 +377,9 @@ def measure_gestures(self,finger_angles):
     checker = True
     pose_names = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
 
-    # pose = 0
-
     if len(self.indicies) < 1:
+            
             self.indicies = [0,1,2,3,4]
-            # self.pose=random.choice(self.indicies)
-            # self.indicies.remove(self.pose)
-            # print "Next Pose: " + str(pose_names[self.pose])
-
-            # print self.time_passed
             self.rows.append(self.time_passed)
             self.time_passed = [0,0,0,0,0]
 
@@ -392,13 +395,9 @@ def measure_gestures(self,finger_angles):
             index+=1
 
     if checker == True and self.pose == 5:
-            # latency = time.time()-self.start_time
-            # print str(pose_names[self.pose]) + " Latency: " + str(latency) 
             
-            # self.time_passed.append(latency)
             self.pose=random.choice(self.indicies)
 
-            # self.indicies.remove(self.pose)
             print "Next Pose: " + str(pose_names[self.pose])
 
             checker = False
@@ -410,14 +409,10 @@ def measure_gestures(self,finger_angles):
             print str(pose_names[self.pose]) + " Latency: " + str(latency) 
             self.time_passed[self.pose] = latency
             
-            # self.pose=random.choice(self.indicies)
-            # self.indicies.remove(self.pose)
             self.indicies.remove(self.pose)
             self.pose = 5
             print str(pose_names[self.pose]) + " For Next Pose"
 
-            # self.start_time = time.time()
-    
     
 
     
