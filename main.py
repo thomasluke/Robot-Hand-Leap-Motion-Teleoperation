@@ -154,7 +154,7 @@ class SampleListener(Leap.Listener):
                         
                     if keyboard.is_pressed("s"):
                             
-                        fields = ["Number", "Latency Arduino", "Latency Serial", "Latency Total"]
+                        fields = ["Number", "Latency Arduino", "Latency Serial and Leap", "Latency Total"]
                         # fields = ["Number", "Latency Leap", "Latency Arduino", "Latency Average Interp Arduino", "Latency Serial", "Latency Total"]
 
                         # name of csv file 

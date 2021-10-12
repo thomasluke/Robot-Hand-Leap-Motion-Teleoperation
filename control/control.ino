@@ -441,7 +441,7 @@ void Mode6()
     servo_pinky.write(servo_pinky_angle_interp);
     //servo_wrist.write(servo_wrist_angle_interp);
 
-    //    LatencyMeasure();
+//        LatencyMeasure();
 
     //      if (leap_data_confidence >= 0.1)
     //      {
