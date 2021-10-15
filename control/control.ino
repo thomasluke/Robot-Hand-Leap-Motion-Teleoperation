@@ -192,7 +192,7 @@ void Mode2()
     servo_pinky.write(servo_pinky_angle);
     //servo_wrist.write(servo_wrist_angle);
 
-    LatencyMeasure();
+//    LatencyMeasure();
     // Serial.flush();
   }
   //  //lcd.print("   ");
@@ -226,7 +226,7 @@ void Mode3()
   servo_ring.write(flex_4_val);    //A4
   servo_pinky.write(flex_5_val);   //A5
 
-  LatencyMeasure();
+//  LatencyMeasure();
 
   //  //lcd.clear();
   //
@@ -260,7 +260,7 @@ void Mode4()
   servo_pinky.write(servo_pinky_angle);
   //servo_wrist.write(servo_wrist_angle);
 
-  LatencyMeasure();
+//  LatencyMeasure();
 }
 
 void Mode5()
@@ -332,7 +332,7 @@ void Mode5()
     //lcd.setCursor(1, 1);
     // //lcd.print("combined");
     //lcd.print(flex_3_val);
-    LatencyMeasure();
+//    LatencyMeasure();
   }
 }
 
@@ -395,7 +395,7 @@ void Mode6()
     //    servo_wrist.write(servo_wrist_angle);
 
     //    ElapsedTime2 = ElapsedTime2/count2;
-    LatencyMeasure();
+//    LatencyMeasure();
     //    Serial.flush();
     count2 = 0;
     //    ElapsedTime2 = 0;
