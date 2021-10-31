@@ -23,6 +23,7 @@ unsigned long StartTimeTotal = millis();
 unsigned long CurrentTime;
 unsigned long ElapsedTimeTotal;
 unsigned long ElapsedTimeArduino;
+unsigned long ElapsedTime;
 unsigned long StartTime = millis();
 
 int servo_thumb_angle;
@@ -332,7 +333,7 @@ void Mode5()
     //lcd.setCursor(1, 1);
     // //lcd.print("combined");
     //lcd.print(flex_3_val);
-//    LatencyMeasure();
+//   LatencyMeasure();
   }
 }
 
@@ -546,16 +547,16 @@ void loop()
       break;
     }
     //        LatencyMeasure();
-    //     CurrentTime = millis();
-    //     ElapsedTime = CurrentTime - StartTime;
+         CurrentTime = millis();
+         ElapsedTime = CurrentTime - StartTime;
     //
-    //     if (ElapsedTime >= 100)
-    //     {
-    //       StartTime = millis();
-    //
-    //       //  ServoGestureChecker();
-    ////       FingerAngles();
-    //     }
+         if (ElapsedTime >= 100)
+         {
+           StartTime = millis();
+    
+           //  ServoGestureChecker();
+           FingerAngles();
+         }
     //  count++;
   }
 }

@@ -102,9 +102,9 @@ class SampleListener(Leap.Listener):
 
     def run(self):
         # threading.Thread(target = main, args=(self,)).start()
-        threading.Thread(target = self.measure_latency).start()
+        # threading.Thread(target = self.measure_latency).start()
         # threading.Thread(target = self.measure_gestures()).start()
-        # threading.Thread(target = self.MeasureAngles).start()
+        threading.Thread(target = self.MeasureAngles).start()
 
     
     def measure_latency(self):
@@ -248,48 +248,48 @@ class SampleListener(Leap.Listener):
                 # finger_angles.append(list(arduino.read(1)))
                     current_time = time.time() - self.global_time_start
                     self.rows.append([current_time, finger_angles[0], finger_angles[1], finger_angles[2], finger_angles[3], finger_angles[4]])
-                    print finger_angles
+                    # print finger_angles
                     
-                    # measure_gestures(self,finger_angles)
-            # if keyboard.is_pressed("s"):
-                                        
-            #         # fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
-            #         fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist"]
-
-            #         # name of csv file 
-            #         filename = str("Gesture Latency Data.csv")
-
-            #         # writing to csv file 
-            #         with open(filename, 'wb') as csvfile: 
-            #             # creating a csv writer object 
-            #             csvwriter = csv.writer(csvfile) 
-                            
-            #             # writing the fields 
-            #             csvwriter.writerow(fields) 
-                            
-            #             # writing the data rows 
-            #             csvwriter.writerows(self.rows)
-        
-            #         print "LATENCY DATA SAVED TO CSV FILE"                   
+                    measure_gestures(self,finger_angles)
             if keyboard.is_pressed("s"):
-                                
-                            fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+                                        
+                    # fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist", "Open Hand"]
+                    fields = ["Thumb Flex","Pointer Flex", "Middle Flex", "Ring and Pinky Flex", "Fist"]
 
-                            # name of csv file 
-                            filename = "Measure Angle Data.csv"
-                    
-                            # writing to csv file 
-                            with open(filename, 'wb') as csvfile: 
-                                # creating a csv writer object 
-                                csvwriter = csv.writer(csvfile) 
-                                    
-                                # writing the fields 
-                                csvwriter.writerow(fields) 
-                                    
-                                # writing the data rows 
-                                csvwriter.writerows(self.rows)
+                    # name of csv file 
+                    filename = str("Gesture Latency Data.csv")
+
+                    # writing to csv file 
+                    with open(filename, 'wb') as csvfile: 
+                        # creating a csv writer object 
+                        csvwriter = csv.writer(csvfile) 
                             
-                            print "LATENCY DATA SAVED TO CSV FILE"       
+                        # writing the fields 
+                        csvwriter.writerow(fields) 
+                            
+                        # writing the data rows 
+                        csvwriter.writerows(self.rows)
+        
+                    print "LATENCY DATA SAVED TO CSV FILE"                   
+            # if keyboard.is_pressed("s"):
+                                
+            #                 fields = ["Time","Thumb", "Pointer", "Middle", "Ring", "Pinky"]
+
+            #                 # name of csv file 
+            #                 filename = "Measure Angle Data.csv"
+                    
+            #                 # writing to csv file 
+            #                 with open(filename, 'wb') as csvfile: 
+            #                     # creating a csv writer object 
+            #                     csvwriter = csv.writer(csvfile) 
+                                    
+            #                     # writing the fields 
+            #                     csvwriter.writerow(fields) 
+                                    
+            #                     # writing the data rows 
+            #                     csvwriter.writerows(self.rows)
+                            
+            #                 print "LATENCY DATA SAVED TO CSV FILE"       
     
     
     def on_frame(self, controller):
